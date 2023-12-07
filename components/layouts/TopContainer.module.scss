@@ -1,0 +1,37 @@
+@import '../../theme/mixins.scss';
+@import '../../theme/variables.scss';
+
+.outer {
+    background: $bright-bg;
+    height: calc(100vh - 50px);
+    padding-top: 50px;
+    @include position(relative, unset, unset, unset, unset);
+    overflow: hidden;
+
+    .inner {
+        background: $light-bg;
+        clip-path: polygon(78% 0, 100% 32%, 100% 100%, 0 98%, 0 0);
+        height: inherit;
+    }
+
+    .inner_most {
+        background: $primary-color;
+        clip-path: polygon(55% 0, 100% 57%, 100% 100%, 0 100%, 0 0);
+        @include position(absolute, 0, unset, unset, unset);
+        width: 100%;
+        height: calc(100% + 60px);
+
+        img {
+            margin-left: 75px;
+            margin-top: 12px;
+        }
+
+        .inner_left_shape {
+            background: $bottom-shape-bg;
+            clip-path: polygon(0 69%, 76% 69%, 100% 100%, 0% 100%);
+            @include position(fixed, unset, unset, 0, 0);
+            height: 160px;
+            width: 250px;
+        }
+    }
+}

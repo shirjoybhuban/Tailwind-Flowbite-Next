@@ -1,0 +1,22 @@
+@mixin flex-view($flex-direction, $align-items, $justify-content, $flex-wrap){
+    display: flex;
+    flex-direction: $flex-direction;
+    align-items: $align-items;
+    justify-content: $justify-content;
+    flex-wrap: $flex-wrap;
+}
+
+@mixin position($position-type, $top, $right, $bottom, $left) {
+    position: $position-type;
+    top: $top;
+    right: $right;
+    bottom: $bottom;
+    left: $left;
+}
+
+@mixin centerByPosition {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
