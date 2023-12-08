@@ -1,0 +1,124 @@
+@import "../../theme/mixins.scss";
+@import "../../theme/variables.scss";
+
+.container {
+    @include flex-view(row, center, center, unset);
+    background: #F5F5F5;
+    border-radius: 10px;
+    box-sizing: border-box;
+    width: calc(100% - 150px);
+    max-width: 1600px;
+    position: absolute;
+    height: calc(100% - 220px);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    @media only screen and (max-width: 480px) {
+        width: calc(100% - 50px);
+        height: calc(100% - 300px);
+    }
+
+    @media only screen and (max-width: 360px) {
+        width: calc(100% - 50px);
+        height: calc(100% - 220px);
+    }
+
+    .divider {
+        height: 75%;
+        padding: 2px;
+        background-color: $primary-color;
+    }
+
+    .left_contents {
+        text-align: center;
+        width: 48%;
+
+        img {
+            margin: 0 auto;
+        }
+    }
+
+    .right_contents {
+        box-sizing: border-box;
+
+        .description {
+            color: #646464;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .signin_request {
+            color: #000000;
+            font-size: 18px;
+            margin-top: 20px;
+            text-align: center;
+
+            a {
+                color: #33CD32;
+                font-weight: 600;
+                text-decoration: none;
+            }
+        }
+
+        form {
+            margin-top: 40px;
+
+            .link {
+                float: right;
+                position: relative;
+                bottom: 15px;
+                text-transform: capitalize;
+                text-decoration: none;
+                color: #3F3F3F;
+            }
+
+            .action_button {
+                margin-top: 20px;
+            }
+
+            .input_error {
+                color: $danger;
+                text-align: right;
+                font-size: 0.8rem;
+                text-align: right;
+                position: relative;
+                top: -10px;
+            }
+
+            .error {
+                color: $danger;
+                text-align: center;
+                padding: 10px 0;
+            }
+
+            .login_options {
+                color: #3F3F3F;
+                margin-bottom: 22px;
+                text-align: center;
+            }
+
+            .action_buttons {
+                @include flex-view(row, center, space-between, unset);
+            }
+
+            .signup_request {
+                color: #000000;
+                font-weight: 400;
+                font-size: 18px;
+                margin-top: 80px;
+                text-align: center;
+
+                @media only screen and (max-width: 480px) {
+                    margin-top: 20px;
+                }
+
+                a {
+                    color: #33CD32;
+                    font-weight: 600;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
