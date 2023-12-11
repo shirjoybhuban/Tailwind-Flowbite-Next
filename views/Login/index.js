@@ -10,40 +10,45 @@ import { authenticationDispatcher, resetLoginWithEmailPassword } from 'pages/api
 import { useRouter } from 'next/router';
 import { XHR_STATE } from 'utility/constants';
 import Head from 'next/head'
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { useForm } from 'react-hook-form';
+import { Button, Checkbox, Label, TextInput } from 'flowbite-react';
 
 export const LoginPage = () => {
     // const [loading, setIsLoading] = useState(false);
-    // const dispatch = useDispatch();
-    // const { loginWithEmailPassword } = useSelector(state => state.authenticationSlice);
-    // const router = useRouter();
+    const dispatch = useDispatch();
+    const { loginWithEmailPassword } = useSelector(state => state.authenticationSlice);
+    const router = useRouter();
     // const [formData, setFormData] = useState({});
-    // const [apiError, setApiError] = useState("");
+    const [apiError, setApiError] = useState("");
     // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
     // const [formErrors, setFormErrors] = useState({});
     // const cookies = new Cookies();
-    // const formDetails = [
-    //     {
-    //         type: "email",
-    //         name: "email",
-    //         placeholder: "Email",
-    //         required: true,
-    //         sizing: "100%"
-    //     },
-    //     {
-    //         type: "password",
-    //         name: "password",
-    //         placeholder: "Password",
-    //         required: true,
-    //         sizing: "100%"
-    //     },
-    //     {
-    //         type: "checkbox",
-    //         name: "remember",
-    //         label: "Remember Me",
-    //         placeholder: "Remember Me",
-    //         required: false
-    //     }
-    // ];
+    const [seePassword, setSeePassword] = useState(false);
+
+    const formDetails = [
+        {
+            type: "email",
+            name: "email",
+            placeholder: "Email",
+            required: true,
+            sizing: "100%"
+        },
+        {
+            type: "password",
+            name: "password",
+            placeholder: "Password",
+            required: true,
+            sizing: "100%"
+        },
+        {
+            type: "checkbox",
+            name: "remember",
+            label: "Remember Me",
+            placeholder: "Remember Me",
+            required: false
+        }
+    ];
 
     // /**
     //  * Sets the Token & checks whether user is authenticated or not
@@ -115,52 +120,55 @@ export const LoginPage = () => {
     // *
     // * @param {event} e - Form event which contains all the form object with user filled values.
     // * @returns {object} Provides Response & Erros state.
-    // */
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     setApiError('');
-    //     let userCredentials = {
-    //         "email": formData.email,
-    //         "password": formData.password,
-    //         "password_confirmation": formData.password
-    //     }
-    //     dispatch(authenticationDispatcher.loginWithEmailPassword(userCredentials, {
-    //         success: (response) => {
-    //             if (response?.token) {
-    //                 dispatch(resetLoginWithEmailPassword());
 
-    //                 cookies.remove('shipSimpleToken');
-    //                 cookies.remove('user');
-    //                 cookies.remove("userId", { path: '/' });
-    //                 cookies.set('shipSimpleToken', response.token, {path:'/', maxAge: 31556926});
-    //                 cookies.set('user', response.user, {path:'/'});
-    //                 cookies.set('userId', response.user.id, {path:'/'});
+    const { register, formState: { errors, isSubmitting }, handleSubmit, setValue, setError, reset, control } = useForm({ mode: 'onBlur' });
 
-    //                 if(response?.user?.email_verified_at){
-    //                     setTimeout(() => {
-    //                         router.push("/dashboard/build-shipment");
-    //                     }, 1000);
-    //                 }else{
-    //                     setIsLoading(false);
-    //                     setTimeout(() => {
-    //                         router.push("/verifyAccount");
-    //                     }, 1000);
-    //                     //setApiError('Email not verified, Please check your email and verify it');
-    //                 }
-    //             }
-    //             setFormData({});
-    //             return response;
-    //         },
-    //         error: (error) => {
-    //             setIsLoading(false);
-    //             if(error.status === 302){
-    //                 setApiError(`Server did not respond for ${formData.email}`);
-    //             }else{
-    //                 setApiError(error.data.message);
-    //             }
-    //         }
-    //     }));
-    // };
+    const onSubmit = async (data) => {
+        // event.preventDefault();
+        setApiError('');
+        let userCredentials = {
+            "email": data.email,
+            "password": data.password,
+            "password_confirmation": data.password
+        }
+        console.log({userCredentials})
+        dispatch(authenticationDispatcher.loginWithEmailPassword(userCredentials, {
+            success: (response) => {
+                if (response?.token) {
+                    dispatch(resetLoginWithEmailPassword());
+
+                    cookies.remove('shipSimpleToken');
+                    cookies.remove('user');
+                    cookies.remove("userId", { path: '/' });
+                    cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 31556926 });
+                    cookies.set('user', response.user, { path: '/' });
+                    cookies.set('userId', response.user.id, { path: '/' });
+
+                    if (response?.user?.email_verified_at) {
+                        setTimeout(() => {
+                            router.push("/dashboard/build-shipment");
+                        }, 1000);
+                    } else {
+                        setIsLoading(false);
+                        setTimeout(() => {
+                            router.push("/verifyAccount");
+                        }, 1000);
+                        //setApiError('Email not verified, Please check your email and verify it');
+                    }
+                }
+                setFormData({});
+                return response;
+            },
+            error: (error) => {
+                setIsLoading(false);
+                if (error.status === 302) {
+                    setApiError(`Server did not respond for ${data.email}`);
+                } else {
+                    setApiError(error.data.message);
+                }
+            }
+        }));
+    };
 
     // /**
     // * Sets the value of the input field
@@ -169,14 +177,22 @@ export const LoginPage = () => {
     // * @param {object} e - Input field event.
     // * @returns {string} Sets the value of each input field in their respective name.
     // */
-    // const handleChange = (index, event) => {
-    //     if (event.target.type === 'checkbox') {
-    //         setFormData({ ...formData, [event.target.name]: event.target.checked });
-    //     } else {
-    //         setFormData({ ...formData, [event.target.name]: event.target.value });
-    //     }
-    // };
+    const handleChange = (index, event) => {
+        if (event.target.type === 'checkbox') {
+            setFormData({ ...formData, [event.target.name]: event.target.checked });
+        } else {
+            setFormData({ ...formData, [event.target.name]: event.target.value });
+        }
+    };
 
+
+    const handleErrorMessage = (errors, name) => {
+
+        if (name in errors) {
+            return errors[name]?.message
+        }
+        return '';
+    }
     return (
         <>
             <div className={style.container}>
@@ -184,45 +200,100 @@ export const LoginPage = () => {
                     <Image src={bg_image} alt="Hero-Image" />
                 </div>
                 <div className={style.divider}></div>
-                {/* <div className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}>
-                    <Header heading='Welcome Back' />
-                    <form onSubmit={handleSubmit}>
-                        {formDetails.map(input => {
-                            return <div key={input.name}>
-                                <CustomTextField
-                                    key={input.name}
-                                    id={input.name}
-                                    name={input.name}
-                                    type={input.type}
-                                    label={input.label}
-                                    placeholder={input.placeholder}
-                                    required={input.required}
-                                    value={formData[input.name] || ''}
-                                    checked={formData[input.name]}
-                                    sizing={input.sizing}
-                                    handleChange={handleChange}
-                                    handleInputBlur={handleInputBlur}
-                                ></CustomTextField>
-                                {formErrors[input.name] && <div className={style.input_error}>{formErrors[input.name]}</div>}
+                <div className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}>
+                    <h1 className='text-center font-bold text-4xl mb-4'>Welcome Back</h1>
+
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className='flex flex-col gap-3'>
+                            <TextInput
+                                id="email"
+                                name="email"
+                                type="email"
+                                color={handleErrorMessage(errors, 'email') ? "failure" : 'primary'}
+                                placeholder="Email"
+                                helperText={
+                                    handleErrorMessage(errors, 'email') ?
+                                        <span className="font-medium text-xs mt-0">
+                                            {/* <span>Oops!</span> */}
+                                            {handleErrorMessage(errors, 'email')}
+                                        </span> : null
+                                }
+                                {...register("email", {
+                                    required: "Email is required",
+                                    pattern: {
+                                        value: /\S+@\S+\.\S+/,
+                                        message: "Please enter valid email address"
+                                    },
+                                    validate: {
+                                        notAccepted: (value) => {
+                                            let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
+                                            var emailArray = value.split("@");
+                                            var email_stat = invalidEmailTypes.includes(emailArray[1]);
+                                            // if (false) {
+                                            //     setDisableSignUpButton(true);
+                                            //     return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
+                                            // } else {
+                                            //     setDisableSignUpButton(false);
+                                            // }
+                                        }
+                                    },
+                                })}
+                            />
+
+
+                            <div className="mb-2 block relative">
+                                <TextInput
+                                    id="password"
+                                    name="password"
+                                    type={seePassword ? 'text' : 'password'}
+                                    placeholder="Password"
+                                    color={handleErrorMessage(errors, 'password') ? "failure" : 'primary'}
+                                    helperText={
+                                        handleErrorMessage(errors, 'password') ?
+                                            <span className="font-medium text-xs mt-0">
+                                                {/* <span>Oops!</span> */}
+                                                {handleErrorMessage(errors, 'password')}
+                                            </span> : null
+                                    }
+                                    {...register("password", {
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 8,
+                                            message: "Password must be at least 8 characters"
+                                        }
+                                    })}
+
+                                />
+
+                                <span style={{ position: 'absolute', top: 12, right: 10, cursor: 'pointer' }} onClick={() => setSeePassword(!seePassword)}>{seePassword ? <AiFillEyeInvisible fontSize={20} /> : <AiFillEye fontSize={20} />}</span>
+
                             </div>
-                        })}
-                        <Link href="/forgotPassword" className={style.link}>Forgot Password?</Link>
-                        <div className={style.action_button}>
-                            <Button icon="" type="submit" title="Login" loading={loading} disabled={isSubmitDisabled} buttonType={!isSubmitDisabled ? `${buttonStyle.primary_button} ${buttonStyle.btn_large}` : `${buttonStyle.disabled_button} ${buttonStyle.btn_large}`} />
                         </div>
+                        <div>
+
+                            <div className='flex justify-between items-center mt-1 mb-2'>
+                                <div className="flex items-center gap-2">
+                                    <Checkbox id="rememberme" color={'green'}       {...register("remberme")} />
+                                    <Label htmlFor="rememberme">Remember Me</Label>
+                                </div>
+                                <Link href="/forgotPassword" className={``}>Forgot Password?</Link>
+
+                            </div>
+                          
+
+                        </div>
+                        <Button disabled={isSubmitting} size="md" color="primary" className={`w-full`} type='submit' isProcessing={isSubmitting} >
+                            <span className="text-md font-bold">
+                                Log In
+                            </span>
+                        </Button>
                         <div className={`${style.error} inline-block`}>
                             {apiError !== '' ? <p>{apiError}</p> : null}
                         </div>
-                        <div style={{display: 'none'}}>
-                            <p className={style.login_options}>or login with</p>
-                            <div className={style.action_buttons}>
-                                <Button icon={google_icon} type="button" title="Google" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
-                                <Button icon={microsoft_icon} type="button" title="Microsoft" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
-                            </div>
-                        </div>
-                        <p className={style.signup_request}>Don't have an account yet? <Link href="/signup">Sign Up</Link></p>
+
+                        <p className={`text-center`}>Don't have an account yet? <Link className='text-shipGreen-400 font-semibold' href="/signup">Sign Up</Link></p>
                     </form>
-                </div> */}
+                </div>
             </div>
         </>
     )

@@ -14,7 +14,7 @@ import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication
 import Head from 'next/head'
 import { TextInput, Select, Checkbox, Label, Button, Spinner, Radio } from "flowbite-react";
 import { ErrorMessage } from "@hookform/error-message";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useEffectOnce } from "hooks/useEffectOnce";
 import { useSearchParams } from 'next/navigation';
@@ -49,7 +49,7 @@ export const SignUpPage = () => {
     const [shopifyToken, setShopifyToken] = useState(null);
     const cookies = new Cookies();
 
-    const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm({ mode: 'onBlur' });
+    const { register, formState: { errors, isSubmitting }, handleSubmit, setValue, setError, reset, control } = useForm({ mode: 'onBlur' });
     // /**
     //  * Updates about the various phases of endpoints i.e. In Progress, Complete & Aslepp.
     //  */
@@ -138,7 +138,7 @@ export const SignUpPage = () => {
         return '';
     }
 
-    console.log(handleErrorMessage(errors, 'email'))
+   
     return (
         <>
             {/* <Head>
@@ -168,245 +168,209 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                             </div>
                         </div>
                     }
-
+                    <h1 className='text-center font-bold text-4xl mb-4'>Sign Up</h1>
                     <form noValidate style={{ display: 'block', marginTop: 0 }} autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
-                        <div className='mb-2'>
-                            <span>Are you looking for:
-                                <span className="item-center mr-3 ml-2">
-                                    <Radio
-                                        id="personal_shipping"
-                                        name="shipping_type"
-                                        value="personal"
-                                        checked={shippingType == 'personal' ? true : false}
-                                        className={`${style.shipping_radio} mr-2`}
-                                        onClick={handleChangeShippingType}
-                                        {...register("shipping_type", { required: "Please make a selection" })}
-                                    />
-                                    <Label htmlFor="personal_shipping">
-                                        Personal Shipping
-                                    </Label>
-                                </span>
-                                <span className="item-center">
-                                    <Radio
-                                        id="business_shipping"
-                                        name="shipping_type"
-                                        value="business"
-                                        checked={shippingType == 'business' ? true : false}
-                                        className={`${style.shipping_radio} mr-2`}
-                                        onClick={handleChangeShippingType}
-                                        {...register("shipping_type", { required: "Please make a selection" })}
-                                    />
-                                    <Label htmlFor="business_shipping">
-                                        Business Shipping
-                                    </Label>
-                                </span>
-                            </span>
-                            {/* <span
-                                className={`errorMessage ml-3`}
-                            ><ErrorMessage errors={errors} name="shipping_type" /></span> */}
+                        <div className='flex flex-col gap-1'>
 
-                        </div>
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="mb-2 block">
-                                <div className={shippingType == 'personal' ? style.company_name_height_none : style.company_name_height}>
-                                    {/* <TextInput
-                                        id="company_name"
-                                        name="company_name"
-                                        type="text"
-                                        disabled={shippingType == 'personal'}
-                                        placeholder={`Company Name`}
-                                        className={`inputFieldSmall`}
-                                        {...register("company_name", {
-                                            validate: {
-                                                required: value => {
-                                                    if (shippingType == 'business' && !value) return 'Company name is required';
-                                                    return true;
-                                                },
+                            <div className='mb-2'>
+                                <span>Are you looking for:
+                                    <span className="item-center mr-3 ml-2">
+                                        <Radio
+                                            id="personal_shipping"
+                                            name="shipping_type"
+                                            value="personal"
+                                            checked={shippingType == 'personal' ? true : false}
+                                            className={`${style.shipping_radio} mr-2`}
+                                            onClick={handleChangeShippingType}
+                                            {...register("shipping_type", { required: "Please make a selection" })}
+                                        />
+                                        <Label htmlFor="personal_shipping">
+                                            Personal Shipping
+                                        </Label>
+                                    </span>
+                                    <span className="item-center">
+                                        <Radio
+                                            id="business_shipping"
+                                            name="shipping_type"
+                                            value="business"
+                                            checked={shippingType == 'business' ? true : false}
+                                            className={`${style.shipping_radio} mr-2`}
+                                            onClick={handleChangeShippingType}
+                                            {...register("shipping_type", { required: "Please make a selection" })}
+                                        />
+                                        <Label htmlFor="business_shipping">
+                                            Business Shipping
+                                        </Label>
+                                    </span>
+                                </span>
+                                <span
+                                    className={`errorMessage ml-3`}
+                                ><ErrorMessage errors={errors} name="shipping_type" /></span>
+
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="mb-2 block">
+                                    <div className={shippingType == 'personal' ? style.company_name_height_none : style.company_name_height}>
+
+
+                                        <TextInput
+                                            color={handleErrorMessage(errors, 'company_name') ? "failure" : 'primary'}
+                                            id="company_name"
+                                            name="company_name"
+                                            type="text"
+                                            disabled={shippingType == 'personal'}
+                                            placeholder={`Company Name`}
+                                            {...register("company_name", {
+                                                validate: {
+                                                    required: value => {
+                                                        if (shippingType == 'business' && !value) return 'Company name is required';
+                                                        return true;
+                                                    },
+                                                }
+                                            })}
+                                            helperText={
+                                                handleErrorMessage(errors, 'company_name') ?
+                                                    <span className="font-medium text-xs mt-0">
+                                                        {/* <span>Oops!</span> */}
+                                                        {handleErrorMessage(errors, 'company_name')}
+                                                    </span> : null
                                             }
-                                        })}
-                                    /> */}
+                                            className='focus:border-green-500 focus:ring-green-500 shadow-sm border-none'
+                                        />
+
+                                    </div>
+
+
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="mb-2 block">
+
 
                                     <TextInput
-                                        color={handleErrorMessage(errors, 'company_name') ? "failure" : 'primary'}
-                                        id="company_name"
-                                        name="company_name"
-                                        type="text"
-                                        disabled={shippingType == 'personal'}
-                                        placeholder={`Company Name`}
-                                        {...register("company_name", {
-                                            validate: {
-                                                required: value => {
-                                                    if (shippingType == 'business' && !value) return 'Company name is required';
-                                                    return true;
-                                                },
-                                            }
-                                        })}
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        color={handleErrorMessage(errors, 'email') ? "failure" : 'primary'}
+                                        placeholder="Email"
                                         helperText={
-                                            handleErrorMessage(errors, 'company_name') ?
+                                            handleErrorMessage(errors, 'email') ?
                                                 <span className="font-medium text-xs mt-0">
                                                     {/* <span>Oops!</span> */}
-                                                    {handleErrorMessage(errors, 'company_name')}
+                                                    {handleErrorMessage(errors, 'email')}
                                                 </span> : null
                                         }
+                                        {...register("email", {
+                                            required: "Email is required",
+                                            pattern: {
+                                                value: /\S+@\S+\.\S+/,
+                                                message: "Please enter valid email address"
+                                            },
+                                            validate: {
+                                                notAccepted: (value) => {
+                                                    let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
+                                                    var emailArray = value.split("@");
+                                                    var email_stat = invalidEmailTypes.includes(emailArray[1]);
+                                                    if (false) {
+                                                        setDisableSignUpButton(true);
+                                                        return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
+                                                    } else {
+                                                        setDisableSignUpButton(false);
+                                                    }
+                                                }
+                                            },
+                                        })}
                                     />
-                                    {/* { console.log({errors})} */}
-                                    {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="company_name" /></span> */}
+
                                 </div>
-
-
                             </div>
-                        </div>
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="mb-2 block">
 
-
-                                <TextInput
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    color={handleErrorMessage(errors, 'email') ? "failure" : 'primary'}
-                                    placeholder="Email"
-                                    helperText={
-                                        handleErrorMessage(errors, 'email') ?
-                                            <span className="font-medium text-xs mt-0">
-                                                {/* <span>Oops!</span> */}
-                                                {handleErrorMessage(errors, 'email')}
-                                            </span> : null
-                                    }
-                                    {...register("email", {
-                                        required: "Email is required",
-                                        pattern: {
-                                            value: /\S+@\S+\.\S+/,
-                                            message: "Please enter valid email address"
-                                        },
-                                        validate: {
-                                            notAccepted: (value) => {
-                                                let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
-                                                var emailArray = value.split("@");
-                                                var email_stat = invalidEmailTypes.includes(emailArray[1]);
-                                                if (false) {
-                                                    setDisableSignUpButton(true);
-                                                    return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
-                                                } else {
-                                                    setDisableSignUpButton(false);
-                                                }
-                                            }
-                                        },
-                                    })}
-                                />
-                                {/* <TextInput
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    placeholder="Email"
-                                    className={`inputFieldSmall`}
-                                    {...register("email", {
-                                        required: "Email is required",
-                                        pattern: {
-                                            value: /\S+@\S+\.\S+/,
-                                            message: "Please enter valid email address"
-                                        },
-                                        validate: {
-                                            notAccepted: (value) => {
-                                                let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
-                                                var emailArray = value.split("@");
-                                                var email_stat = invalidEmailTypes.includes(emailArray[1]);
-                                                if (false) {
-                                                    setDisableSignUpButton(true);
-                                                    return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
-                                                } else {
-                                                    setDisableSignUpButton(false);
-                                                }
-                                            }
-                                        },
-                                    })}
-                                /> */}
-                                {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="email" /></span> */}
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="mb-2 block relative">
-                                <TextInput
-                                    id="password"
-                                    name="password"
-                                    type={seePassword ? 'text' : 'password'}
-                                    placeholder="Password"
-                                    color={handleErrorMessage(errors, 'password') ? "failure" : 'primary'}
-                                    helperText={
-                                        handleErrorMessage(errors, 'password') ?
-                                            <span className="font-medium text-xs mt-0">
-                                                {/* <span>Oops!</span> */}
-                                                {handleErrorMessage(errors, 'password')}
-                                            </span> : null
-                                    }
-                                    {...register("password", {
-                                        required: "Password is required",
-                                        minLength: {
-                                            value: 8,
-                                            message: "Password must be at least 8 characters"
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="mb-2 block relative">
+                                    <TextInput
+                                        id="password"
+                                        name="password"
+                                        type={seePassword ? 'text' : 'password'}
+                                        placeholder="Password"
+                                        color={handleErrorMessage(errors, 'password') ? "failure" : 'primary'}
+                                        helperText={
+                                            handleErrorMessage(errors, 'password') ?
+                                                <span className="font-medium text-xs mt-0">
+                                                    {/* <span>Oops!</span> */}
+                                                    {handleErrorMessage(errors, 'password')}
+                                                </span> : null
                                         }
-                                    })}
-                                   
-                                />
-                                {/* <TextInput
-                                    id="password"
-                                    name="password"
-                                    type={seePassword ? 'text' : 'password'}
-                                    placeholder="Password"
-                                    className={`inputFieldSmall`}
-                                    {...register("password", {
-                                        required: "Password is required",
-                                        minLength: {
-                                            value: 8,
-                                            message: "Password must be at least 8 characters"
-                                        }
-                                    })}
-                                /> */}
-                                <span style={{ position: 'absolute', top: 22, right: 10, cursor: 'pointer' }} onClick={() => setSeePassword(!seePassword)}>{seePassword ? <AiFillEyeInvisible fontSize={20} /> : <AiFillEye fontSize={20} />}</span>
-                                {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="password" /></span> */}
-                            </div>
-                        </div>
+                                        {...register("password", {
+                                            required: "Password is required",
+                                            minLength: {
+                                                value: 8,
+                                                message: "Password must be at least 8 characters"
+                                            }
+                                        })}
 
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="mb-2 block">
-                                <TextInput
-                                    id="no_of_courier"
-                                    name="no_of_courier"
-                                    type="number"
-                                    placeholder="How many shipments do you send per week?"
-                                    {...register("no_of_courier")}
-                                />
-                            </div>
-                        </div>
+                                    />
 
-                        <div className="grid grid-cols-1 gap-4">
-                        <div className="mb-2 block">
-                                {console.log({errors})}
-                                <Select
-                                    id="how_hear"
-                                    name="how_hear"
-                                    required={true}
-                               
-                                    ref={register("how_hear",{
-                                        required: "select one option"
-                                     })}
-                                >
-                                    <option value="">How did you hear about us?</option>
-                                    <option value="Google">Google</option>
-                                    <option value="Instagram">Instagram</option>
-                                    <option value="Facebook">Facebook</option>
-                                    <option value="Website">Website</option>
-                                    <option value="Referral">Referral</option>
-                                    <option value="Other">Other</option>
-                                </Select>
+                                    <span style={{ position: 'absolute', top: 12, right: 10, cursor: 'pointer' }} onClick={() => setSeePassword(!seePassword)}>{seePassword ? <AiFillEyeInvisible fontSize={20} /> : <AiFillEye fontSize={20} />}</span>
+
+                                </div>
                             </div>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="mb-2 block">
+                                    <TextInput
+                                        id="no_of_courier"
+                                        name="no_of_courier"
+                                        type="number"
+                                        placeholder="How many shipments do you send per week?"
+                                        {...register("no_of_courier")}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="mb-2 block">
+                                  
+
+
+
+                                    <Controller
+                                        render={({
+                                            field: { onChange, onBlur, value, name, ref },
+                                            fieldState: { invalid, isTouched, isDirty, error },
+                                        }) => (
+                                            <Select
+                                                id="how_hear"
+                                                name="how_hear"
+                                                value={value}
+                                                onChange={onChange} // send value to hook form
+                                                onBlur={onBlur} // notify when input is touched
+                                                inputRef={ref} // wire up the input ref
+                                            >
+                                                <option value="">How did you hear about us?</option>
+                                                <option value="Google">Google</option>
+                                                <option value="Instagram">Instagram</option>
+                                                <option value="Facebook">Facebook</option>
+                                                <option value="Website">Website</option>
+                                                <option value="Referral">Referral</option>
+                                                <option value="Other">Other</option>
+                                            </Select>
+                                        )}
+                                        name="how_hear"
+                                        control={control}
+                                        rules={{ required: 'this is required' }}
+                                    />
+
+                                    {errors?.how_hear ? <p className='text-red-600 font-medium text-xs mt-2'>Please fill how you hear about us</p> : null}
+
+                                </div>
+                            </div>
+
+
                         </div>
 
                         <div className="text-right float-right mt-3 w-full">
-                            <Button disabled={loading || disableSignUpButton} size="lg" color="primary" className={`w-full`} type='submit'>
-                                {loading ? <span className='pr-3'><Spinner className={utilStyle.greenSpinner} aria-label="Spinner" /></span> : null}
-                                <span className="text-lg font-bold">
+                            <Button disabled={isSubmitting} size="md" color="primary" className={`w-full`} type='submit' isProcessing={isSubmitting} >
+                                <span className="text-md font-bold">
                                     Sign Up Now
                                 </span>
                             </Button>
@@ -415,15 +379,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                         <div className={`${style.error} inline-block`}>
                             {apiError !== '' ? <p>{apiError}</p> : null}
                         </div>
-                        {/* <div style={{display: 'none'}}>
-                            <p className={style.login_options}>or sign up with</p>
-                            <div className={style.action_buttons}>
-                                <Button icon={google_icon} type="button" title="Google" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
-                                <Button icon={microsoft_icon} type="button" title="Microsoft" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
-                            </div>
-                        </div> */}
-                        <p className={style.terms}>By registering you agree to our <a href='https://shipsimple.ca/terms-and-conditions/' target="_blank" className={style.termsOfService} rel="noreferrer">Terms of Service</a> and <a href='https://shipsimple.ca/privacy-policy/' target="_blank" className={style.termsOfService} rel="noreferrer">Privacy Policy</a>.</p>
-                        <p className={style.signup_request}>Already an account? <Link href="/">Login</Link></p>
+
+                        <p className={`text-center mt-10`}>By registering you agree to our <a href='https://shipsimple.ca/terms-and-conditions/' target="_blank" className={`text-[#08085E] font-semibold underline`} rel="noreferrer">Terms of Service</a> and <a href='https://shipsimple.ca/privacy-policy/' target="_blank" className={`text-[#08085E]  font-semibold underline`} rel="noreferrer">Privacy Policy</a>.</p>
+                        <p className={`text-center mt-2`}>Already an account? <Link className='text-shipGreen-400 font-semibold' href="/">Login</Link></p>
                     </form>
                 </div>
             </div>
