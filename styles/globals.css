@@ -25,3 +25,17 @@
     )
     rgb(var(--background-start-rgb));
 } */
+
+
+
+@layer components {
+
+  .inputFieldSmall {
+    @apply indent-[10px] text-sm  px-0 py-2.5 rounded-[5px];
+  }
+
+  .errorMessage {
+    @apply text-[red] text-[13px];
+  }
+
+}

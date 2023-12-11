@@ -19,6 +19,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { useEffectOnce } from "hooks/useEffectOnce";
 import { useSearchParams } from 'next/navigation';
 
+import Cookies from 'universal-cookie';
 export const SignUpPage = () => {
 
     // const hasWindow = typeof window !== 'undefined';
@@ -31,49 +32,50 @@ export const SignUpPage = () => {
     //       height,
     //     };
     // }
-    // const searchParams = useSearchParams()
-    // const shpfyTkn = searchParams.get('shopify_integration');
-    // const [loading, setIsLoading] = useState(false);
-    // const dispatch = useDispatch();
-    // const { registerWithEmailPassword } = useSelector(state => state.authenticationSlice);
-    // const router = useRouter();
+    const searchParams = useSearchParams()
+    const shpfyTkn = searchParams.get('shopify_integration');
+    const [loading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
+    const { registerWithEmailPassword } = useSelector(state => state.authenticationSlice);
+    const router = useRouter();
     // const [formData, setFormData] = useState({});
-    // const [apiError, setApiError] = useState("");
+    const [apiError, setApiError] = useState("");
     // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
     // const [formErrors, setFormErrors] = useState({});
-    // const [seePassword, setSeePassword] = useState(false);
+    const [seePassword, setSeePassword] = useState(false);
     // const [companyFull, setCompanyFull] = useState(true);
-    // const [shippingType, setShippingType] = useState('');
-    // const [disableSignUpButton, setDisableSignUpButton] = useState(false);
-    // const [shopifyToken, setShopifyToken] = useState(null);
-    // const cookies = new Cookies();
+    const [shippingType, setShippingType] = useState('');
+    const [disableSignUpButton, setDisableSignUpButton] = useState(false);
+    const [shopifyToken, setShopifyToken] = useState(null);
+    const cookies = new Cookies();
 
-    // const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm({mode: 'onBlur'});
+    const { register, formState: { errors }, handleSubmit, setValue, setError, reset } = useForm({ mode: 'onBlur' });
     // /**
     //  * Updates about the various phases of endpoints i.e. In Progress, Complete & Aslepp.
     //  */
-    // useEffect(() => {
-    //     setShopifyToken(shpfyTkn);
-    // }, [shpfyTkn])
-    
-    // useEffect(() => {
-    //     if (registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
-    //         setIsLoading(true);
-    //     }
-    //     if (
-    //         registerWithEmailPassword.response !== null &&
-    //         registerWithEmailPassword.error === "" &&
-    //         registerWithEmailPassword.loading === XHR_STATE.COMPLETE
-    //     ) {
-    //         setIsLoading(false);
-    //     } else if (
-    //         registerWithEmailPassword.error !== "" &&
-    //         registerWithEmailPassword.loading === XHR_STATE.ASLEEP
-    //     ) {
-    //         setIsLoading(false);
-    //         setApiError(registerWithEmailPassword.error);
-    //     }
-    // }, [registerWithEmailPassword]);
+    useEffect(() => {
+        setShopifyToken(shpfyTkn);
+    }, [shpfyTkn])
+
+
+    useEffect(() => {
+        if (registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
+            setIsLoading(true);
+        }
+        if (
+            registerWithEmailPassword.response !== null &&
+            registerWithEmailPassword.error === "" &&
+            registerWithEmailPassword.loading === XHR_STATE.COMPLETE
+        ) {
+            setIsLoading(false);
+        } else if (
+            registerWithEmailPassword.error !== "" &&
+            registerWithEmailPassword.loading === XHR_STATE.ASLEEP
+        ) {
+            setIsLoading(false);
+            setApiError(registerWithEmailPassword.error);
+        }
+    }, [registerWithEmailPassword]);
 
     // useEffectOnce(() => {
     //     if (hasWindow) {
@@ -89,39 +91,54 @@ export const SignUpPage = () => {
     // /**
     //  * Submit function of Profile form
     //  */
-    // const onSubmit = async (data) => {
-    //     let userCredentials = {
-    //         "company_name": shippingType == 'personal' ? '' : data.company_name,
-    //         "email": data.email,
-    //         "password": data.password,
-    //         "password_confirmation": data.password,
-    //         "how_hear": data.how_hear,
-    //         "no_of_courier": data.no_of_courier,
-    //         "shippingType": shippingType,
-    //         "shopify_integration": shopifyToken ? shopifyToken : null,
-    //     };
-    //     dispatch(authenticationDispatcher.registerWithEmailPassword(userCredentials, {
-    //         success: (response) => {
-    //             if (response?.token) {
-    //                 cookies.remove('shipSimpleToken');
-    //                 cookies.remove('user');
-    //                 cookies.remove('userId');
-    //                 cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 86400 });
-    //                 cookies.set('user', response.user, { path: '/' });
-    //                 cookies.set('userId', response.user.id, { path: '/' });
-    //                 cookies.set('shippingType', shippingType, { path: '/' });
-    //                 router.push('/verifyAccount');
-    //             }
-    //             setFormData({});
-    //             return response;
-    //         }
-    //     }));
-    // };
+    const onSubmit = async (data) => {
 
-    // const handleChangeShippingType = (e) => {
-    //     setShippingType(e.target.value);
-    // }
+        let userCredentials = {
+            "company_name": shippingType == 'personal' ? '' : data.company_name,
+            "email": data.email,
+            "password": data.password,
+            "password_confirmation": data.password,
+            "how_hear": data.how_hear,
+            "no_of_courier": data.no_of_courier,
+            "shippingType": shippingType,
+            "shopify_integration": shopifyToken ? shopifyToken : null,
+        };
 
+        console.log({ userCredentials })
+
+        dispatch(authenticationDispatcher.registerWithEmailPassword(userCredentials, {
+            success: (response) => {
+                if (response?.token) {
+                    cookies.remove('shipSimpleToken');
+                    cookies.remove('user');
+                    cookies.remove('userId');
+                    cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 86400 });
+                    cookies.set('user', response.user, { path: '/' });
+                    cookies.set('userId', response.user.id, { path: '/' });
+                    cookies.set('shippingType', shippingType, { path: '/' });
+                    router.push('/verifyAccount');
+                }
+                setFormData({});
+                return response;
+            }
+        }));
+    };
+
+    const handleChangeShippingType = (e) => {
+        setShippingType(e.target.value);
+    }
+
+
+
+    const handleErrorMessage = (errors, name) => {
+
+        if (name in errors) {
+            return errors[name]?.message
+        }
+        return '';
+    }
+
+    console.log(handleErrorMessage(errors, 'email'))
     return (
         <>
             {/* <Head>
@@ -136,25 +153,25 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
             <MasterLayout /> */}
             <div className={style.container}>
                 <div className={`${style.left_contents} hidden sm:hidden md:hidden lg:block`}>
-                    <h1 className={style.signup_heading}>The #1 Choice <br/>for Business Shipping</h1>
+                    <h1 className={style.signup_heading}>The #1 Choice <br />for Business Shipping</h1>
                     <Image src={bg_image} alt="Hero-Image" width={'300'} />
                 </div>
                 <div className={`${style.divider} hidden sm:hidden md:hidden lg:block`}></div>
-                {/* <div className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-15 w-full sm:w-full md:w-4/5 lg:w-1/2`}>
-                    <Header heading='SignUp' />
+                <div className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-15 w-full sm:w-full md:w-4/5 lg:w-1/2`}>
+
                     {
-                        shopifyToken && 
+                        shopifyToken &&
                         <div className='flex justify-center'>
                             <Image src={logo} alt="Company Logo" />
                             <div>
-                                <Image src={shopify_logo} alt="Shopify Company Logo" style={{width:'70px',height:'70px'}}/>
+                                <Image src={shopify_logo} alt="Shopify Company Logo" style={{ width: '70px', height: '70px' }} />
                             </div>
                         </div>
                     }
-                    
-                    <form noValidate style={{ display: 'block', marginTop: 0}} autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
+
+                    <form noValidate style={{ display: 'block', marginTop: 0 }} autoComplete={'off'} onSubmit={handleSubmit(onSubmit)}>
                         <div className='mb-2'>
-                            <span>Are you looking for: 
+                            <span>Are you looking for:
                                 <span className="item-center mr-3 ml-2">
                                     <Radio
                                         id="personal_shipping"
@@ -163,7 +180,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                                         checked={shippingType == 'personal' ? true : false}
                                         className={`${style.shipping_radio} mr-2`}
                                         onClick={handleChangeShippingType}
-                                        {...register("shipping_type", { required: "Please make a selection"  })}
+                                        {...register("shipping_type", { required: "Please make a selection" })}
                                     />
                                     <Label htmlFor="personal_shipping">
                                         Personal Shipping
@@ -177,50 +194,86 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                                         checked={shippingType == 'business' ? true : false}
                                         className={`${style.shipping_radio} mr-2`}
                                         onClick={handleChangeShippingType}
-                                        {...register("shipping_type", { required: "Please make a selection"  })}
+                                        {...register("shipping_type", { required: "Please make a selection" })}
                                     />
                                     <Label htmlFor="business_shipping">
                                         Business Shipping
                                     </Label>
                                 </span>
                             </span>
-                            <span className={`${utilStyle.errorMessage} ml-3`}><ErrorMessage errors={errors} name="shipping_type" /></span>
-                            
+                            {/* <span
+                                className={`errorMessage ml-3`}
+                            ><ErrorMessage errors={errors} name="shipping_type" /></span> */}
+
                         </div>
                         <div className="grid grid-cols-1 gap-4">
                             <div className="mb-2 block">
-                            <div className={shippingType == 'personal' ? style.company_name_height_none : style.company_name_height}>
-                            <TextInput
-                                    id="company_name"
-                                    name="company_name"
-                                    type="text"
-                                    disabled={shippingType == 'personal'}
-                                    placeholder={`Company Name`}
-                                    className={utilStyle.inputFieldSmall}
-                                    {...register("company_name", { 
-                                        validate: {
-                                        required: value => {
-                                            if (shippingType == 'business' && !value) return 'Company name is required';
-                                            return true;
-                                          },
+                                <div className={shippingType == 'personal' ? style.company_name_height_none : style.company_name_height}>
+                                    {/* <TextInput
+                                        id="company_name"
+                                        name="company_name"
+                                        type="text"
+                                        disabled={shippingType == 'personal'}
+                                        placeholder={`Company Name`}
+                                        className={`inputFieldSmall`}
+                                        {...register("company_name", {
+                                            validate: {
+                                                required: value => {
+                                                    if (shippingType == 'business' && !value) return 'Company name is required';
+                                                    return true;
+                                                },
+                                            }
+                                        })}
+                                    /> */}
+
+                                    <TextInput
+                                        color={handleErrorMessage(errors, 'company_name') ? "failure" : 'primary'}
+                                        id="company_name"
+                                        name="company_name"
+                                        type="text"
+                                        disabled={shippingType == 'personal'}
+                                        placeholder={`Company Name`}
+                                        {...register("company_name", {
+                                            validate: {
+                                                required: value => {
+                                                    if (shippingType == 'business' && !value) return 'Company name is required';
+                                                    return true;
+                                                },
+                                            }
+                                        })}
+                                        helperText={
+                                            handleErrorMessage(errors, 'company_name') ?
+                                                <span className="font-medium text-xs mt-0">
+                                                    {/* <span>Oops!</span> */}
+                                                    {handleErrorMessage(errors, 'company_name')}
+                                                </span> : null
                                         }
-                                     })}
-                                />
-                                 <span className={utilStyle.errorMessage}><ErrorMessage errors={errors} name="company_name" /></span>
-                            </div>
-                                
-                               
+                                    />
+                                    {/* { console.log({errors})} */}
+                                    {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="company_name" /></span> */}
+                                </div>
+
+
                             </div>
                         </div>
                         <div className="grid grid-cols-1 gap-4">
                             <div className="mb-2 block">
+
+
                                 <TextInput
                                     id="email"
                                     name="email"
                                     type="email"
+                                    color={handleErrorMessage(errors, 'email') ? "failure" : 'primary'}
                                     placeholder="Email"
-                                    className={utilStyle.inputFieldSmall}
-                                    {...register("email", { 
+                                    helperText={
+                                        handleErrorMessage(errors, 'email') ?
+                                            <span className="font-medium text-xs mt-0">
+                                                {/* <span>Oops!</span> */}
+                                                {handleErrorMessage(errors, 'email')}
+                                            </span> : null
+                                    }
+                                    {...register("email", {
                                         required: "Email is required",
                                         pattern: {
                                             value: /\S+@\S+\.\S+/,
@@ -231,17 +284,44 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                                                 let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
                                                 var emailArray = value.split("@");
                                                 var email_stat = invalidEmailTypes.includes(emailArray[1]);
-                                                if(false){
+                                                if (false) {
                                                     setDisableSignUpButton(true);
                                                     return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
-                                                }else{
+                                                } else {
                                                     setDisableSignUpButton(false);
                                                 }
                                             }
                                         },
                                     })}
                                 />
-                                <span className={utilStyle.errorMessage}><ErrorMessage errors={errors} name="email" /></span>
+                                {/* <TextInput
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="Email"
+                                    className={`inputFieldSmall`}
+                                    {...register("email", {
+                                        required: "Email is required",
+                                        pattern: {
+                                            value: /\S+@\S+\.\S+/,
+                                            message: "Please enter valid email address"
+                                        },
+                                        validate: {
+                                            notAccepted: (value) => {
+                                                let invalidEmailTypes = ['gmail.com', 'gmail.ca', 'googlmail.com', 'googlmail.ca', 'hotmail.com', 'hotmail.ca', 'outlook.com', 'outlook.ca', 'yahoo.com', 'yahoo.ca', 'live.com', 'live.ca', 'icloud.com', 'icloud.ca', 'ymail.com', 'ymail.ca'];
+                                                var emailArray = value.split("@");
+                                                var email_stat = invalidEmailTypes.includes(emailArray[1]);
+                                                if (false) {
+                                                    setDisableSignUpButton(true);
+                                                    return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
+                                                } else {
+                                                    setDisableSignUpButton(false);
+                                                }
+                                            }
+                                        },
+                                    })}
+                                /> */}
+                                {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="email" /></span> */}
                             </div>
                         </div>
 
@@ -252,17 +332,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                                     name="password"
                                     type={seePassword ? 'text' : 'password'}
                                     placeholder="Password"
-                                    className={utilStyle.inputFieldSmall}
-                                    {...register("password", { 
+                                    color={handleErrorMessage(errors, 'password') ? "failure" : 'primary'}
+                                    helperText={
+                                        handleErrorMessage(errors, 'password') ?
+                                            <span className="font-medium text-xs mt-0">
+                                                {/* <span>Oops!</span> */}
+                                                {handleErrorMessage(errors, 'password')}
+                                            </span> : null
+                                    }
+                                    {...register("password", {
                                         required: "Password is required",
                                         minLength: {
                                             value: 8,
                                             message: "Password must be at least 8 characters"
                                         }
                                     })}
+                                   
                                 />
-                                <span style={{ position: 'absolute', top: 11, right: 10, cursor: 'pointer' }} onClick={() => setSeePassword(!seePassword)}>{seePassword ? <AiFillEyeInvisible fontSize={20} /> : <AiFillEye fontSize={20} />}</span>
-                                <span className={utilStyle.errorMessage}><ErrorMessage errors={errors} name="password" /></span>
+                                {/* <TextInput
+                                    id="password"
+                                    name="password"
+                                    type={seePassword ? 'text' : 'password'}
+                                    placeholder="Password"
+                                    className={`inputFieldSmall`}
+                                    {...register("password", {
+                                        required: "Password is required",
+                                        minLength: {
+                                            value: 8,
+                                            message: "Password must be at least 8 characters"
+                                        }
+                                    })}
+                                /> */}
+                                <span style={{ position: 'absolute', top: 22, right: 10, cursor: 'pointer' }} onClick={() => setSeePassword(!seePassword)}>{seePassword ? <AiFillEyeInvisible fontSize={20} /> : <AiFillEye fontSize={20} />}</span>
+                                {/* <span className={`errorMessage`}><ErrorMessage errors={errors} name="password" /></span> */}
                             </div>
                         </div>
 
@@ -273,20 +375,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                                     name="no_of_courier"
                                     type="number"
                                     placeholder="How many shipments do you send per week?"
-                                    className={utilStyle.inputFieldSmall}
                                     {...register("no_of_courier")}
                                 />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 gap-4">
-                            <div className="mb-2 block">
+                        <div className="mb-2 block">
+                                {console.log({errors})}
                                 <Select
                                     id="how_hear"
                                     name="how_hear"
                                     required={true}
-                                    className={utilStyle.inputFieldSmall}
-                                    {...register("how_hear")}
+                               
+                                    ref={register("how_hear",{
+                                        required: "select one option"
+                                     })}
                                 >
                                     <option value="">How did you hear about us?</option>
                                     <option value="Google">Google</option>
@@ -300,8 +404,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                         </div>
 
                         <div className="text-right float-right mt-3 w-full">
-                            <Button disabled={loading || disableSignUpButton} className={`${utilStyle.greenButton} w-full`} type='submit'>
-                                {loading ? <span className='pr-3'><Spinner className={utilStyle.greenSpinner} aria-label="Spinner" /></span> : null }
+                            <Button disabled={loading || disableSignUpButton} size="lg" color="primary" className={`w-full`} type='submit'>
+                                {loading ? <span className='pr-3'><Spinner className={utilStyle.greenSpinner} aria-label="Spinner" /></span> : null}
                                 <span className="text-lg font-bold">
                                     Sign Up Now
                                 </span>
@@ -311,17 +415,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                         <div className={`${style.error} inline-block`}>
                             {apiError !== '' ? <p>{apiError}</p> : null}
                         </div>
-                        <div style={{display: 'none'}}>
+                        {/* <div style={{display: 'none'}}>
                             <p className={style.login_options}>or sign up with</p>
                             <div className={style.action_buttons}>
                                 <Button icon={google_icon} type="button" title="Google" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
                                 <Button icon={microsoft_icon} type="button" title="Microsoft" buttonType={`${buttonStyle.secondary_button} ${buttonStyle.btn_half}`} />
                             </div>
-                        </div>
+                        </div> */}
                         <p className={style.terms}>By registering you agree to our <a href='https://shipsimple.ca/terms-and-conditions/' target="_blank" className={style.termsOfService} rel="noreferrer">Terms of Service</a> and <a href='https://shipsimple.ca/privacy-policy/' target="_blank" className={style.termsOfService} rel="noreferrer">Privacy Policy</a>.</p>
                         <p className={style.signup_request}>Already an account? <Link href="/">Login</Link></p>
                     </form>
-                </div> */}
+                </div>
             </div>
         </>
     )
