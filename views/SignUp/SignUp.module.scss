@@ -2,165 +2,169 @@
 @import "../../theme/variables.scss";
 
 .container {
-    @include flex-view(row, center, center, unset);
-    background: #F5F5F5;
-    border-radius: 10px;
+  @include flex-view(row, center, center, unset);
+  background: #f5f5f5;
+  border-radius: 10px;
+  box-sizing: border-box;
+  width: calc(100% - 150px);
+  max-width: 1600px;
+  position: absolute;
+  height: calc(100% - 140px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  @media only screen and (max-width: 480px) {
+    width: calc(100% - 50px);
+    height: calc(100% - 300px);
+  }
+
+  @media only screen and (max-width: 360px) {
+    width: calc(100% - 50px);
+    height: calc(100% - 220px);
+  }
+
+  .divider {
+    height: 75%;
+    padding: 2px;
+    background-color: $primary-color;
+  }
+
+  .left_contents {
+    text-align: center;
+    width: 48%;
+
+    .signup_heading {
+      font-size: 44px;
+      line-height: 52px;
+      margin-bottom: 30px;
+      color: #08085e;
+    }
+
+    img {
+      margin: 0 auto;
+    }
+  }
+
+  .right_contents {
     box-sizing: border-box;
-    width: calc(100% - 150px);
-    max-width: 1600px;
-    position: absolute;
-    height: calc(100% - 140px);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 
-    @media only screen and (max-width: 480px) {
-        width: calc(100% - 50px);
-        height: calc(100% - 300px);
+    .description {
+      color: #646464;
+      padding-top: 20px;
+      text-align: center;
     }
 
-    @media only screen and (max-width: 360px) {
-        width: calc(100% - 50px);
-        height: calc(100% - 220px);
+    .shipping_radio {
+      position: relative;
+      top: 3px;
     }
 
-    .divider{
-        height: 75%;
-        padding: 2px;
-        background-color: $primary-color;
+    .error_msg {
+      color: red;
     }
 
-    .left_contents{
+    .signin_request {
+      color: #000000;
+      font-size: 18px;
+      margin-top: 20px;
+      text-align: center;
+
+      a {
+        color: #33cd32;
+        font-weight: 600;
+        text-decoration: none;
+      }
+    }
+
+    form {
+      margin-top: 40px;
+
+      @media only screen and (max-width: 480px) {
+        margin-top: 0px;
+      }
+
+      .link {
+        float: right;
+        position: relative;
+        bottom: 15px;
+        text-transform: capitalize;
+        text-decoration: none;
+        color: #3f3f3f;
+      }
+
+      .action_button {
+        margin-top: 20px;
+      }
+
+      .input_error {
+        color: $danger;
+        text-align: right;
+        font-size: 0.8rem;
+        text-align: right;
+        position: relative;
+        top: -10px;
+      }
+
+      .error {
+        color: $danger;
         text-align: center;
-        width: 48%;
+        padding: 10px 0;
+      }
 
-        .signup_heading{
-            font-size: 44px;
-            line-height: 52px;
-            margin-bottom: 30px;
-            color: #08085E;
+      .login_options {
+        color: #3f3f3f;
+        margin-bottom: 22px;
+        text-align: center;
+      }
+
+      .action_buttons {
+        @include flex-view(row, center, space-between, unset);
+      }
+
+      .terms {
+        margin-top: 60px;
+        text-align: center;
+
+        @media only screen and (max-width: 480px) {
+          margin-top: 20px;
         }
-    
-        img{
-            margin: 0 auto;
+
+        .termsOfService {
+          color: $ss-secondary;
         }
+      }
+
+      .signup_request {
+        color: #000000;
+        font-weight: 400;
+        font-size: 18px;
+        margin-top: 10px;
+        text-align: center;
+
+        a {
+          color: #33cd32;
+          font-weight: 600;
+          text-decoration: none;
+        }
+      }
     }
-
-    .right_contents{
-        box-sizing: border-box;
-    
-        .description{
-            color: #646464;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        .shipping_radio{
-            position: relative;
-            top: 3px;
-        }
-
-        .error_msg{
-            color: red;
-        }
-    
-        .signin_request{
-            color: #000000;
-            font-size: 18px;
-            margin-top: 20px;
-            text-align: center;
-    
-            a{
-                color: #33CD32;
-                font-weight: 600;
-                text-decoration: none;
-            }
-        }
-    
-        form{
-            margin-top: 40px;
-
-            @media only screen and (max-width: 480px) {
-                margin-top: 0px;
-            }
-    
-            .link{
-                float: right;
-                position: relative;
-                bottom: 15px;
-                text-transform: capitalize;
-                text-decoration: none;
-                color: #3F3F3F;
-            }
-    
-            .action_button{
-                margin-top: 20px;
-            }
-
-            .input_error {
-                color: $danger;
-                text-align: right;
-                font-size: 0.8rem;
-                text-align: right;
-                position: relative;
-                top: -10px;
-            }
-
-            .error {
-                color: $danger;
-                text-align: center;
-                padding: 10px 0;
-            }
-    
-            .login_options{
-                color: #3F3F3F;
-                margin-bottom: 22px;
-                text-align: center;
-            }
-    
-            .action_buttons{
-                @include flex-view(row, center, space-between, unset);
-            }
-
-            .terms{
-                margin-top: 60px;
-                text-align: center;
-
-                @media only screen and (max-width: 480px) {
-                    margin-top: 20px;
-                }
-
-                .termsOfService{
-                    color: $ss-secondary;
-                }
-            }
-    
-            .signup_request{
-                color: #000000;
-                font-weight: 400;
-                font-size: 18px;
-                margin-top: 10px;
-                text-align: center;
-    
-                a{
-                    color: #33CD32;
-                    font-weight: 600;
-                    text-decoration: none;
-                }
-            }
-        }
-    }
+  }
 }
 
 .company_name_height {
-    display: block;
-    animation: fadeIn 1s;
+  display: block;
+  animation: fadeIn 1s;
 }
 .company_name_height_none {
-    display:none;
+  display: none;
 }
 
 @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+  0% {
+    opacity: 0;
   }
+  100% {
+    opacity: 1;
+  }
+}
