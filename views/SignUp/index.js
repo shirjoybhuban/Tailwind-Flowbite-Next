@@ -207,7 +207,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="flex flex-col gap-1 flex-wrap">
-              <div>
+              <div className="flex w-full items-center gap-1 flex-wrap mb-1">
                 <div className="flex items-center gap-3">
                   <p className="font-semibold"> Are you looking for:</p>
                   <div className="item-center flex">
@@ -249,10 +249,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                     </Label>
                   </div>
                 </div>
-                <span className={`errorMessage ml-3`}>
+                <span className={`text-red-500 font-bold text-xs ml-1 flex-1`}>
                   <ErrorMessage errors={errors} name="shipping_type" />
                 </span>
               </div>
+
               <div className="grid grid-cols-1 gap-4">
                 <div className="mb-2 block">
                   <div>
