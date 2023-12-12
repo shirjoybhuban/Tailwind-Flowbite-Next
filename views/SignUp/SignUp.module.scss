@@ -2,17 +2,17 @@
 @import "../../theme/variables.scss";
 
 .container {
-  @include flex-view(row, center, center, unset);
-  background: #f5f5f5;
-  border-radius: 10px;
-  box-sizing: border-box;
-  width: calc(100% - 150px);
-  max-width: 1600px;
-  position: absolute;
-  height: calc(100% - 140px);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  // @include flex-view(row, center, center, unset);
+  // background: #f5f5f5;
+  // border-radius: 10px;
+  // box-sizing: border-box;
+  // width: calc(100% - 150px);
+  // max-width: 1600px;
+  // position: absolute;
+  // height: calc(100% - 140px);
+  // top: 50%;
+  // left: 50%;
+  // transform: translate(-50%, -50%);
 
   @media only screen and (max-width: 480px) {
     width: calc(100% - 50px);

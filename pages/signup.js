@@ -5,12 +5,12 @@ import { SignUpPage } from 'views/SignUp';
 const SignUp = () => {
   return (
     <Layout>
-      <div>
+      <>
         <Head>
           <title>SignUp - ShipSimple</title>
         </Head>
         <SignUpPage />
-      </div>
+      </>
     </Layout>
   );
 };

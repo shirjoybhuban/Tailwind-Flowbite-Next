@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+@layer components {
+  .public-layout {
+    @apply bg-[#F5F5F5] rounded-[10px] overflow-auto w-full pt-9 px-2 md:pt-24;
+  }
+  .public-layout-inner {
+    @apply flex flex-row justify-center items-center;
+  }
+  .public-layout-left {
+    @apply w-[48%] text-center hidden sm:hidden md:hidden lg:flex flex-col justify-center items-center;
+  }
+  .public-layout-right {
+    @apply w-full sm:w-full md:w-4/5 lg:w-1/2 flex flex-col justify-center items-center;
+  }
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;

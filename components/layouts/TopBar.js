@@ -8,10 +8,10 @@ import { BiAnchor, BiHelpCircle, BiHighlight } from 'react-icons/bi';
 
 const TopBar = () => {
   return (
-    <div className="absolute top-3 left-2/4 -translate-x-1/2 -translate-y-3 w-[calc(100%-190px)] max-w-[1600px] mx-[auto] my-[0]">
+    <div className="absolute top-3 left-2/4 -translate-x-1/2 -translate-y-3 w-full md:w-[calc(100%-190px)] max-w-[1600px] mx-[auto] my-[0]">
       <div className="flex justify-between items-center">
         <Image src={logo} alt="Ship Simple" height={91} width={190} />
-        <div className="flex gap-2">
+        {/* <div className="flex gap-2">
         <Button size="md" color="secondary">
             Quick Quote
           </Button>
@@ -46,7 +46,7 @@ const TopBar = () => {
               <Dropdown.Item icon={HiLogout}>Sign out</Dropdown.Item>
             </Dropdown>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

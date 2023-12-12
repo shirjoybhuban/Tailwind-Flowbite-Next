@@ -2,7 +2,6 @@ import Image from "next/image";
 import { useState } from "react";
 import bg_image from "../../public/images/hero.svg";
 import style from "./Login.module.scss";
-
 import { Button, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
