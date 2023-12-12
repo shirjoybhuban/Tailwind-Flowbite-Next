@@ -59,7 +59,7 @@ export const VerifyAccount = () => {
             setIsEmailVerified(true);
             setTimeout(() => {
                 setIsLoading(false);
-            }, 3000);
+            }, 2000);
             // const token = response.token;
             // cookie.set('shipSimpleToken', token, {path: '/'});
             // const id = response.id;
