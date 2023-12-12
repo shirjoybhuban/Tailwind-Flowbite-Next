@@ -5,7 +5,7 @@ import { authenticationAPIs } from "./authenticationApi";
 export const initialState = {
   registerWithEmailPassword: {
     response: null,
-    loading: XHR_STATE.ASLEEP,
+    loading: XHR_STATE.IN_PROGRESS,
     error: "",
   },
   authInfo:{

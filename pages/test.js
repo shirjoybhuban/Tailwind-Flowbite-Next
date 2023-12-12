@@ -167,7 +167,7 @@ const Test = () => {
             Next
             <HiOutlineArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <Button size="md" color="primary" isProcessing>
+          <Button size="md" color="primary" isProcessing className='w-full'>
             Click me!
           </Button>
           <Button color="primary" disabled>

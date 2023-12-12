@@ -93,6 +93,7 @@ export const SignUpPage = () => {
     //  */
     const onSubmit = async (data) => {
 
+
         let userCredentials = {
             "company_name": shippingType == 'personal' ? '' : data.company_name,
             "email": data.email,
@@ -108,18 +109,18 @@ export const SignUpPage = () => {
 
         dispatch(authenticationDispatcher.registerWithEmailPassword(userCredentials, {
             success: (response) => {
-                if (response?.token) {
-                    cookies.remove('shipSimpleToken');
-                    cookies.remove('user');
-                    cookies.remove('userId');
-                    cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 86400 });
-                    cookies.set('user', response.user, { path: '/' });
-                    cookies.set('userId', response.user.id, { path: '/' });
-                    cookies.set('shippingType', shippingType, { path: '/' });
-                    router.push('/verifyAccount');
-                }
-                setFormData({});
-                return response;
+                // if (response?.token) {
+                //     cookies.remove('shipSimpleToken');
+                //     cookies.remove('user');
+                //     cookies.remove('userId');
+                //     cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 86400 });
+                //     cookies.set('user', response.user, { path: '/' });
+                //     cookies.set('userId', response.user.id, { path: '/' });
+                //     cookies.set('shippingType', shippingType, { path: '/' });
+                //     router.push('/verifyAccount');
+                // }
+                // setFormData({});
+                // return response;
             }
         }));
     };
@@ -128,16 +129,12 @@ export const SignUpPage = () => {
         setShippingType(e.target.value);
     }
 
-
-
     const handleErrorMessage = (errors, name) => {
-
         if (name in errors) {
             return errors[name]?.message
         }
         return '';
     }
-
    
     return (
         <>
@@ -369,9 +366,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                         </div>
 
                         <div className="text-right float-right mt-3 w-full">
-                            <Button disabled={isSubmitting} size="md" color="primary" className={`w-full`} type='submit' isProcessing={isSubmitting} >
+                            <Button disabled={isSubmitting} size="md" color="primary" className={`w-full`} type='submit' >
                                 <span className="text-md font-bold">
-                                    Sign Up Now
+                                <Spinner aria-label="Loader" /> Sign Up Now
                                 </span>
                             </Button>
                         </div>
