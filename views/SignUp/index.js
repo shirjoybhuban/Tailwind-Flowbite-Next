@@ -28,6 +28,9 @@ import { useEffectOnce } from "hooks/useEffectOnce";
 import { useSearchParams } from "next/navigation";
 
 import Cookies from "universal-cookie";
+import { handleErrorMessage } from "utility/utilityFunctions";
+import { Title } from "components/layouts/common/Title";
+import { Divider } from "components/layouts/common/Divider";
 export const SignUpPage = () => {
   // const hasWindow = typeof window !== 'undefined';
 
@@ -119,7 +122,7 @@ export const SignUpPage = () => {
       shopify_integration: shopifyToken ? shopifyToken : null,
     };
 
-    console.log({ userCredentials });
+    // console.log({ userCredentials });
 
     dispatch(
       authenticationDispatcher.registerWithEmailPassword(userCredentials, {
@@ -143,13 +146,6 @@ export const SignUpPage = () => {
 
   const handleChangeShippingType = (e) => {
     setShippingType(e.target.value);
-  };
-
-  const handleErrorMessage = (errors, name) => {
-    if (name in errors) {
-      return errors[name]?.message;
-    }
-    return "";
   };
 
   return (
@@ -176,9 +172,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
           </h1>
           <Image src={bg_image} alt="Hero-Image" width={"300"} />
         </div>
-        <div
-          className={`${style.divider} hidden sm:hidden md:hidden lg:block`}
-        ></div>
+        <Divider />
+
         <div
           className={`${style.right_contents} lg:ml-12 px-5 sm:px-10 md:px-15 lg:px-15 w-full sm:w-full md:w-4/5 lg:w-1/2`}
         >
@@ -194,12 +189,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
               </div>
             </div>
           )}
-          <div className="flex flex-col items-center mb-4">
-            <h1 className="text-[#08085E] inline-block text-[1.8rem] font-bold">
-              SignUp
-            </h1>
-            <div className="bg-primary-500 h-0.5 w-[45px] mt-1"></div>
-          </div>
+          <Title heading="SignUp" />
+
           <form
             noValidate
             style={{ display: "block", marginTop: 0 }}
@@ -464,7 +455,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                 disabled={isSubmitting}
                 size="md"
                 color="primary"
-                className={`w-full`}
+                className={`w-full mb-2`}
                 type="submit"
               >
                 <span className="text-md font-bold">
@@ -477,13 +468,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
             </div>
           </form>
           <div>
-            <div className={`${style.error} inline-block`}>
-              {apiError !== "" ? (
-                <p className="text-red-500">{apiError}</p>
-              ) : null}
-            </div>
+            {apiError !== "" ? (
+              <p className="text-red-500 text-center px-0 py-2.5 inline-block">
+                {apiError}
+              </p>
+            ) : null}
 
-            <p className={`text-center mt-10`}>
+            <p className={`text-center mt-12`}>
               By registering you agree to our{" "}
               <a
                 href="https://shipsimple.ca/terms-and-conditions/"
