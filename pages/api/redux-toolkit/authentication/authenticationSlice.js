@@ -5,7 +5,7 @@ import { authenticationAPIs } from "./authenticationApi";
 export const initialState = {
   registerWithEmailPassword: {
     response: null,
-    loading: XHR_STATE.IN_PROGRESS,
+    loading: XHR_STATE.ASLEEP,
     error: "",
   },
   authInfo:{
@@ -258,10 +258,10 @@ export const authenticationDispatcher = {
       }
     },
   resendVerificationEmail:
-    (token, options) => async (dispatch) => {
+    (userId, options) => async (dispatch) => {
       try {
-        dispatch(resendVerificationEmailStarts(token));
-        const response = await authenticationAPIs.resendVerificationEmail(token);
+        dispatch(resendVerificationEmailStarts(userId));
+        const response = await authenticationAPIs.resendVerificationEmail(userId);
         dispatch(resendVerificationEmailSuccess(response));
         if (options && options.success) options.success(response);
       } catch (error) {

@@ -29,13 +29,17 @@ export const authenticationAPIs = {
     });
     return data.data;
   },
-  resendVerificationEmail: async (token) => {
+  resendVerificationEmail: async (userId) => {
+    const body = {
+      user_id : userId,
+    }
     const data = await axios({
       url: Constants.Api.authentication.resendVerificationEmail,
       method: "POST",
-      headers: {
-        authorization: 'Bearer' + ' ' + token
-      },
+      // headers: {
+      //   authorization: 'Bearer' + ' ' + token
+      // },
+      data: body,
     })
     return data.data;
   },

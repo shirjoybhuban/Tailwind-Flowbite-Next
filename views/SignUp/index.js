@@ -28,6 +28,7 @@ import { useEffectOnce } from "hooks/useEffectOnce";
 import { useSearchParams } from "next/navigation";
 
 import Cookies from "universal-cookie";
+import ResendEmail from "components/verify-account/ResendEmail";
 export const SignUpPage = () => {
   // const hasWindow = typeof window !== 'undefined';
 
@@ -56,6 +57,8 @@ export const SignUpPage = () => {
   const [shippingType, setShippingType] = useState("");
   const [disableSignUpButton, setDisableSignUpButton] = useState(false);
   const [shopifyToken, setShopifyToken] = useState(null);
+  const [resendEmail, setResendEmail] = useState(false);
+  const [userId, setUserId] = useState(null);
   const cookies = new Cookies();
 
   const {
@@ -74,24 +77,24 @@ export const SignUpPage = () => {
     setShopifyToken(shpfyTkn);
   }, [shpfyTkn]);
 
-  useEffect(() => {
-    if (registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
-      setIsLoading(true);
-    }
-    if (
-      registerWithEmailPassword.response !== null &&
-      registerWithEmailPassword.error === "" &&
-      registerWithEmailPassword.loading === XHR_STATE.COMPLETE
-    ) {
-      setIsLoading(false);
-    } else if (
-      registerWithEmailPassword.error !== "" &&
-      registerWithEmailPassword.loading === XHR_STATE.ASLEEP
-    ) {
-      setIsLoading(false);
-      setApiError(registerWithEmailPassword.error);
-    }
-  }, [registerWithEmailPassword]);
+//   useEffect(() => {
+//     if (registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
+//       setIsLoading(true);
+//     }
+//     if (
+//       registerWithEmailPassword.response !== null &&
+//       registerWithEmailPassword.error === "" &&
+//       registerWithEmailPassword.loading === XHR_STATE.COMPLETE
+//     ) {
+//       setIsLoading(false);
+//     } else if (
+//       registerWithEmailPassword.error !== "" &&
+//       registerWithEmailPassword.loading === XHR_STATE.ASLEEP
+//     ) {
+//       setIsLoading(false);
+//       setApiError(registerWithEmailPassword.error);
+//     }
+//   }, [registerWithEmailPassword]);
 
   // useEffectOnce(() => {
   //     if (hasWindow) {
@@ -124,6 +127,10 @@ export const SignUpPage = () => {
     dispatch(
       authenticationDispatcher.registerWithEmailPassword(userCredentials, {
         success: (response) => {
+            console.log('response',response);
+            console.log('response',response.user_id);
+             setUserId(response.user_id);
+             setResendEmail(true);
           // if (response?.token) {
           //     cookies.remove('shipSimpleToken');
           //     cookies.remove('user');
@@ -136,6 +143,9 @@ export const SignUpPage = () => {
           // }
           // setFormData({});
           // return response;
+        },
+        error: (error) => {
+            console.log('error',error);
         },
       })
     );
@@ -179,8 +189,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
         <div
           className={`${style.divider} hidden sm:hidden md:hidden lg:block`}
         ></div>
+        {resendEmail && userId ? <ResendEmail userId={userId}/> : 
         <div
-          className={`${style.right_contents} lg:ml-12 px-5 sm:px-10 md:px-15 lg:px-15 w-full sm:w-full md:w-4/5 lg:w-1/2`}
+          className={`${style.right_contents} lg:ml-12 px-5 sm:px-10 md:px-20 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}
         >
           {shopifyToken && (
             <div className="flex justify-center">
@@ -198,7 +209,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
             <h1 className="text-[#08085E] inline-block text-[1.8rem] font-bold">
               SignUp
             </h1>
-            <div className="bg-primary-500 h-0.5 w-[45px] mt-1"></div>
+            <div className="bg-primary-500 h-0.5 w-[45px] mt-2"></div>
           </div>
           <form
             noValidate
@@ -219,7 +230,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                       className={`${style.shipping_radio} mr-2`}
                       onClick={handleChangeShippingType}
                       {...register("shipping_type", {
-                        required: "Please make a selection",
+                        required: "Required",
                       })}
                     />
                     <Label
@@ -280,7 +291,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                       helperText={
                         handleErrorMessage(errors, "company_name") ? (
                           <span className="font-medium text-xs mt-0">
-                            {/* <span>Oops!</span> */}
                             {handleErrorMessage(errors, "company_name")}
                           </span>
                         ) : null
@@ -306,7 +316,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                     helperText={
                       handleErrorMessage(errors, "email") ? (
                         <span className="font-medium text-xs mt-0">
-                          {/* <span>Oops!</span> */}
                           {handleErrorMessage(errors, "email")}
                         </span>
                       ) : null
@@ -369,7 +378,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                     helperText={
                       handleErrorMessage(errors, "password") ? (
                         <span className="font-medium text-xs mt-0">
-                          {/* <span>Oops!</span> */}
                           {handleErrorMessage(errors, "password")}
                         </span>
                       ) : null
@@ -421,9 +429,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                       fieldState: { invalid, isTouched, isDirty, error },
                     }) => (
                       <Select
-                        // className={`${
-                        //   error ? "border-gray-300" : "border-red-400"
-                        // }`}
                         className="focus:outline-none"
                         style={{
                           borderColor: error ? "#ef4444" : "#d1d5db",
@@ -432,9 +437,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                         id="how_hear"
                         name="how_hear"
                         value={value}
-                        onChange={onChange} // send value to hook form
-                        onBlur={onBlur} // notify when input is touched
-                        inputRef={ref} // wire up the input ref
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        inputRef={ref}
                       >
                         <option value="">How did you hear about us? </option>
                         <option value="Google">Google</option>
@@ -468,10 +473,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
                 type="submit"
               >
                 <span className="text-md font-bold">
-                  {isSubmitting && (
+                  {registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS && (
                     <Spinner aria-label="Loader" className="mx-2" />
                   )}
-                  {isSubmitting ? "Signing Up..." : `Sign Up Now`}
+                  {registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS ? "Signing Up..." : `Sign Up Now`}
                 </span>
               </Button>
             </div>
@@ -515,6 +520,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
             </p>
           </div>
         </div>
+        }
+        
+        
       </div>
     </>
   );
