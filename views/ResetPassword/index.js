@@ -283,9 +283,9 @@ export const ResetPasswordPage = () => {
                       }}
                       onClick={() => setSeePassword(!seePassword)}>
                       {seePassword ? (
-                        <AiFillEyeInvisible fontSize={20} />
+                        <AiFillEyeInvisible fontSize={18} className='text-slate-400'/>
                       ) : (
-                        <AiFillEye fontSize={20} />
+                        <AiFillEye fontSize={18} className='text-slate-400'/>
                       )}
                     </span>
                   </div>
@@ -332,9 +332,9 @@ export const ResetPasswordPage = () => {
                         setSeeConfirmPassword(!seeConfirmPassword)
                       }>
                       {seeConfirmPassword ? (
-                        <AiFillEyeInvisible fontSize={20} />
+                        <AiFillEyeInvisible fontSize={18} className='text-slate-400' />
                       ) : (
-                        <AiFillEye fontSize={20} />
+                        <AiFillEye fontSize={18} className='text-slate-400' />
                       )}
                     </span>
                   </div>

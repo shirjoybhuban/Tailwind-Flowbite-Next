@@ -376,9 +376,9 @@ export const SignUpPage = () => {
                       }}
                       onClick={() => setSeePassword(!seePassword)}>
                       {seePassword ? (
-                        <AiFillEyeInvisible fontSize={20} />
+                        <AiFillEyeInvisible fontSize={18} className='text-slate-400' />
                       ) : (
-                        <AiFillEye fontSize={20} />
+                        <AiFillEye fontSize={18} className='text-slate-400' />
                       )}
                     </span>
                   </div>
