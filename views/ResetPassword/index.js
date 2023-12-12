@@ -359,7 +359,7 @@ export const ResetPasswordPage = () => {
           <div className={`${style.success} inline-block`}>
             {apiSuccess !== "" ? <p>{apiSuccess}</p> : null}
           </div>
-          <p className={`text-center mt-2 text-lg font-semibold`}>
+          <p className={`text-center text-lg font-semibold`}>
             Don't have an account yet?{" "}
             <Link className="text-shipGreen-400 font-semibold" href="/signup">
               Sign Up
