@@ -1,29 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 // import MasterLayout from 'layout/masterLayout';
 // import Header from "components/header";
-import Image from "next/image";
-import style from "./ForgotPassword.module.scss";
+import Image from 'next/image';
+import style from './ForgotPassword.module.scss';
 // import buttonStyle from "../../components/button/Button.module.scss";
-import bg_image from "../../public/images/hero.svg";
+import bg_image from '../../public/images/hero.svg';
 // import { CustomTextField } from "components/customTextField";
-import Link from "next/link";
+import Link from 'next/link';
 // import Button from "components/button";
-import { useDispatch, useSelector } from "react-redux";
-import { XHR_STATE } from "utility/constants";
-import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
-import { useRouter } from "next/router";
-import Cookies from "universal-cookie";
-import { Title } from "components/layouts/common/Title";
-import { Button, Spinner, TextInput } from "flowbite-react";
-import { handleErrorMessage } from "utility/utilityFunctions";
-import { useForm } from "react-hook-form";
-import { Divider } from "components/layouts/common/Divider";
+import { useDispatch, useSelector } from 'react-redux';
+import { XHR_STATE } from 'utility/constants';
+import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
+import { useRouter } from 'next/router';
+import Cookies from 'universal-cookie';
+import { Title } from 'components/layouts/common/Title';
+import { Button, Spinner, TextInput } from 'flowbite-react';
+import { handleErrorMessage } from 'utility/utilityFunctions';
+import { useForm } from 'react-hook-form';
+import { Divider } from 'components/layouts/common/Divider';
 
 export const ForgotPasswordPage = () => {
   const [loading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const [apiError, setApiError] = useState("");
-  const [apiSuccess, setApiSuccess] = useState("");
+  const [apiError, setApiError] = useState('');
+  const [apiSuccess, setApiSuccess] = useState('');
 
   const { forgotPassword } = useSelector((state) => state.authenticationSlice);
   const [currentToken, setCurrentToken] = useState();
@@ -37,20 +37,20 @@ export const ForgotPasswordPage = () => {
     setError,
     reset,
     control,
-  } = useForm({ mode: "onBlur" });
+  } = useForm({ mode: 'onBlur' });
   /**
    * Sets the Token & checks whether user is authenticated or not
    */
   useEffect(() => {
-    const token = cookies.get("shipSimpleToken")
-      ? cookies.get("shipSimpleToken")
+    const token = cookies.get('shipSimpleToken')
+      ? cookies.get('shipSimpleToken')
       : null;
     setCurrentToken(token);
     token
-      ? router.push("/dashboard/build-shipment")
-      : router.push("/forgot-password");
-    setApiError("");
-    setApiSuccess("");
+      ? router.push('/dashboard/build-shipment')
+      : router.push('/forgot-password');
+    setApiError('');
+    setApiSuccess('');
   }, []);
 
   /**
@@ -62,7 +62,7 @@ export const ForgotPasswordPage = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
 
-    setApiError("");
+    setApiError('');
     let userEmail = {
       email: data.email,
     };
@@ -93,109 +93,112 @@ export const ForgotPasswordPage = () => {
 
   return (
     <>
-      {/* <MasterLayout /> */}
-      <div className={style.container}>
-        <div
-          className={`${style.left_contents} hidden sm:hidden md:hidden lg:block`}
-        >
-          <Image src={bg_image} alt="Hero-Image" />
-        </div>
-        <Divider />
-        <div
-          className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}
-        >
-          <Title heading="Forgot Password" />
-
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="mb-2 block">
-                <TextInput
-                  className="border-gray-300"
-                  id="email"
-                  name="email"
-                  type="email"
-                  color={
-                    handleErrorMessage(errors, "email") ? "failure" : "primary"
-                  }
-                  placeholder="Email"
-                  helperText={
-                    handleErrorMessage(errors, "email") ? (
-                      <span className="font-medium text-xs mt-0">
-                        {/* <span>Oops!</span> */}
-                        {handleErrorMessage(errors, "email")}
-                      </span>
-                    ) : null
-                  }
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /\S+@\S+\.\S+/,
-                      message: "Please enter valid email address",
-                    },
-                    validate: {
-                      notAccepted: (value) => {
-                        let invalidEmailTypes = [
-                          "gmail.com",
-                          "gmail.ca",
-                          "googlmail.com",
-                          "googlmail.ca",
-                          "hotmail.com",
-                          "hotmail.ca",
-                          "outlook.com",
-                          "outlook.ca",
-                          "yahoo.com",
-                          "yahoo.ca",
-                          "live.com",
-                          "live.ca",
-                          "icloud.com",
-                          "icloud.ca",
-                          "ymail.com",
-                          "ymail.ca",
-                        ];
-                        var emailArray = value.split("@");
-                        var email_stat = invalidEmailTypes.includes(
-                          emailArray[1]
-                        );
-                      },
-                    },
-                  })}
-                />
-              </div>
-            </div>
-
-            <Button
-              disabled={isSubmitting}
-              size="md"
-              color="primary"
-              className={`w-full mt-1`}
-              type="submit"
-            >
-              <span className="text-md font-bold">
-                {isSubmitting && (
-                  <Spinner aria-label="Loader" className="mx-2" />
-                )}
-                {`Reset`}
-              </span>
-            </Button>
-          </form>
-          {apiError !== "" ? (
-            <p className="text-red-500 text-center px-0 py-2.5 inline-block">
-              {apiError}
-            </p>
-          ) : null}
-          <div className={`${style.success} inline-block`}>
-            {apiSuccess !== "" ? <p>{apiSuccess}</p> : null}
+      <div className="public-layout">
+        <div className="public-layout-inner">
+          <div className="public-layout-left">
+            <h1
+              className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
+              The #1 Choice <br />
+              for Business Shipping
+            </h1>
+            <Image src={bg_image} alt="Hero-Image" width={'380'} />
           </div>
-          <p className={`text-center mt-0 text-lg font-semibold`}>
-            Don't have an account yet?{" "}
-            <Link className="text-shipGreen-400 font-semibold" href="/signup">
-              Sign Up
-            </Link>{" "}
-            Or{" "}
-            <Link className="text-shipGreen-400 font-semibold" href="/">
-              Log In
-            </Link>
-          </p>
+          <Divider />
+          <div className="public-layout-right">
+            <Title heading="Forgot Password" />
+
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-[60%]">
+              <div className="grid grid-cols-1 gap-4 mt-7">
+                <div className="mb-2 block">
+                  <TextInput
+                    className="border-gray-300"
+                    id="email"
+                    name="email"
+                    type="email"
+                    color={
+                      handleErrorMessage(errors, 'email')
+                        ? 'failure'
+                        : 'primary'
+                    }
+                    placeholder="Email"
+                    helperText={
+                      handleErrorMessage(errors, 'email') ? (
+                        <span className="font-medium text-xs mt-0">
+                          {/* <span>Oops!</span> */}
+                          {handleErrorMessage(errors, 'email')}
+                        </span>
+                      ) : null
+                    }
+                    {...register('email', {
+                      required: 'Email is required',
+                      pattern: {
+                        value: /\S+@\S+\.\S+/,
+                        message: 'Please enter valid email address',
+                      },
+                      validate: {
+                        notAccepted: (value) => {
+                          let invalidEmailTypes = [
+                            'gmail.com',
+                            'gmail.ca',
+                            'googlmail.com',
+                            'googlmail.ca',
+                            'hotmail.com',
+                            'hotmail.ca',
+                            'outlook.com',
+                            'outlook.ca',
+                            'yahoo.com',
+                            'yahoo.ca',
+                            'live.com',
+                            'live.ca',
+                            'icloud.com',
+                            'icloud.ca',
+                            'ymail.com',
+                            'ymail.ca',
+                          ];
+                          var emailArray = value.split('@');
+                          var email_stat = invalidEmailTypes.includes(
+                            emailArray[1]
+                          );
+                        },
+                      },
+                    })}
+                  />
+                </div>
+              </div>
+
+              <Button
+                disabled={isSubmitting}
+                size="md"
+                color="primary"
+                className={`w-full mt-4 mb-9`}
+                type="submit">
+                <span className="text-md font-bold">
+                  {isSubmitting && (
+                    <Spinner aria-label="Loader" className="mx-2" />
+                  )}
+                  {`Reset`}
+                </span>
+              </Button>
+            </form>
+            {apiError !== '' ? (
+              <p className="text-red-500 text-center px-0 py-2.5 inline-block">
+                {apiError}
+              </p>
+            ) : null}
+            <div className={`${style.success} inline-block`}>
+              {apiSuccess !== '' ? <p>{apiSuccess}</p> : null}
+            </div>
+            <p className={`text-center mt-0 text-lg font-semibold`}>
+              Don't have an account yet?{' '}
+              <Link className="text-shipGreen-400 font-semibold" href="/signup">
+                Sign Up
+              </Link>{' '}
+              Or{' '}
+              <Link className="text-shipGreen-400 font-semibold" href="/">
+                Log In
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </>

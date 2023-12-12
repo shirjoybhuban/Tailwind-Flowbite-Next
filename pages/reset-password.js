@@ -5,12 +5,12 @@ import { ResetPasswordPage } from 'views/ResetPassword';
 const ResetPassword = () => {
   return (
     <Layout>
-      <div>
+      <>
         <Head>
           <title>Reset Password - ShipSimple</title>
         </Head>
         <ResetPasswordPage />
-      </div>
+      </>
     </Layout>
   );
 };

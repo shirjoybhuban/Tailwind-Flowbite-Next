@@ -10,6 +10,7 @@ import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'flowbite-react';
 import Cookies from 'universal-cookie';
+import { Divider } from 'components/layouts/common/Divider';
 
 export const VerifyAccount = () => {
   const router = useRouter();
@@ -58,13 +59,14 @@ export const VerifyAccount = () => {
           success: (response) => {
             console.log(response);
             setIsEmailVerified(true);
-            console.log(response.data);
             if (response.data.length == 0) {
               setIsEmailAlreadyVerified(true);
-              setIsLoading(false);
+              setTimeout(() => {
+                setIsLoading(false);
+              }, 800);
               setTimeout(() => {
                 router.push('/');
-              }, 800);
+              }, 2000);
             } else {
               if (response?.token) {
                 cookies.remove('shipSimpleToken');
@@ -140,20 +142,18 @@ export const VerifyAccount = () => {
         <noscript dangerouslySetInnerHTML={{__html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JDD9R4"
 height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscript>
         <MasterLayout /> */}
-      <div className={style.container}>
-        <div
-          className={`${style.left_contents} hidden sm:hidden md:hidden lg:block`}>
-          <h1
-            className={`text-[44px] leading-[52px] text-[#08085E] mb-[30px] font-bold`}>
-            The #1 Choice <br />
-            for Business Shipping
-          </h1>
-          <Image src={bg_image} alt="Hero-Image" width={'300'} />
-        </div>
-        <div
-          className={`${style.divider} hidden sm:hidden md:hidden lg:block`}></div>
-        <div>
-          <div className="flex flex-row items-center justify-center bg-white rounded-xl box-border m-5 h-4/5 px-5 sm:px-10 md:px-15 lg:px-20 pt-14 pb-14 w-full">
+      <div className="public-layout">
+        <div className="public-layout-inner">
+          <div className="public-layout-left">
+            <h1
+              className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
+              The #1 Choice <br />
+              for Business Shipping
+            </h1>
+            <Image src={bg_image} alt="Hero-Image" width={'380'} />
+          </div>
+          <Divider />
+          <div className="public-layout-right">
             {loading ? (
               <div className="flex flex-col items-center justify-center">
                 <Spinner size="xl" />

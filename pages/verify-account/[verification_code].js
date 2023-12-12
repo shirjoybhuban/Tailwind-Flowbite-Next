@@ -5,12 +5,12 @@ import { VerifyAccount } from 'views/VerifyAccount';
 const VerifyAccountPage = () => {
   return (
     <Layout>
-      <div>
+      <>
         <Head>
           <title>Verify Account - ShipSimple</title>
         </Head>
         <VerifyAccount />
-      </div>
+      </>
     </Layout>
   );
 };

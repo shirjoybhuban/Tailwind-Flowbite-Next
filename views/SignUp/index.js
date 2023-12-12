@@ -130,8 +130,6 @@ export const SignUpPage = () => {
     dispatch(
       authenticationDispatcher.registerWithEmailPassword(userCredentials, {
         success: (response) => {
-          console.log('response', response);
-          console.log('response', response.user_id);
           setUserId(response.user_id);
           setResendEmail(true);
           // if (response?.token) {
@@ -162,7 +160,7 @@ export const SignUpPage = () => {
     <div className="public-layout">
       <div className="public-layout-inner">
         <div
-          className='public-layout-left'>
+          className="public-layout-left">
           <h1
             className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
             The #1 Choice <br />
@@ -190,16 +188,16 @@ export const SignUpPage = () => {
             )}
             <Title heading="SignUp" />
             <form
+              className="w-full md:w-[60%]"
               noValidate
-              style={{ display: 'block', marginTop: 0 }}
               autoComplete={'off'}
               onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-1 flex-wrap mt-7">
                 <div className="flex w-full items-center gap-1 flex-wrap mb-2">
-                  <div className="flex  flex-col md:flex-row ">
-                    <p className="font-semibold mr-3 mb-2 md:mb-0"> Are you looking for:</p>
-                    <div className='flex justify-between gap-2'>
-                    <div className="flex item-center ">
+                  <div className="flex flex-col ">
+                    <p className="font-semibold mr-3 mb-2"> Are you looking for:</p>
+                    <div className='flex gap-5'>
+                    <div className="flex item-center">
                       <Radio
                         id="personal_shipping"
                         name="shipping_type"
@@ -471,7 +469,7 @@ export const SignUpPage = () => {
                 <a
                   href="https://shipsimple.ca/terms-and-conditions/"
                   target="_blank"
-                  className={`text-[#08085E] font-semibold underline`}
+                  className={`text-secondary-950 font-semibold underline`}
                   rel="noreferrer">
                   Terms of Service
                 </a>{' '}
@@ -479,7 +477,7 @@ export const SignUpPage = () => {
                 <a
                   href="https://shipsimple.ca/privacy-policy/"
                   target="_blank"
-                  className={`text-[#08085E]  font-semibold underline`}
+                  className={`text-secondary-950  font-semibold underline`}
                   rel="noreferrer">
                   Privacy Policy
                 </a>

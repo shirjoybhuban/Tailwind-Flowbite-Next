@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import style from "./ResetPassword.module.scss";
-import bg_image from "../../public/images/hero.svg";
-import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
-import { XHR_STATE } from "utility/constants";
-import { Divider } from "components/layouts/common/Divider";
-import { Title } from "components/layouts/common/Title";
-import { handleErrorMessage } from "utility/utilityFunctions";
-import { useForm } from "react-hook-form";
-import { Button, Spinner, TextInput } from "flowbite-react";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import style from './ResetPassword.module.scss';
+import bg_image from '../../public/images/hero.svg';
+import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
+import { XHR_STATE } from 'utility/constants';
+import { Divider } from 'components/layouts/common/Divider';
+import { Title } from 'components/layouts/common/Title';
+import { handleErrorMessage } from 'utility/utilityFunctions';
+import { useForm } from 'react-hook-form';
+import { Button, Spinner, TextInput } from 'flowbite-react';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 
 export const ResetPasswordPage = () => {
   // const formDetails = [
@@ -45,8 +45,8 @@ export const ResetPasswordPage = () => {
   // const dispatch = useDispatch();
   // const { resetPassword } = useSelector(state => state.authenticationSlice);
   // const [formData, setFormData] = useState({});
-  const [apiError, setApiError] = useState("");
-  const [apiSuccess, setApiSuccess] = useState("");
+  const [apiError, setApiError] = useState('');
+  const [apiSuccess, setApiSuccess] = useState('');
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
 
@@ -111,11 +111,11 @@ export const ResetPasswordPage = () => {
     reset,
     control,
     watch,
-  } = useForm({ mode: "onBlur" });
+  } = useForm({ mode: 'onBlur' });
 
   const onSubmit = async (data) => {
     setIsLoading(true);
-    setApiError("");
+    setApiError('');
     data.token = resetToken;
     console.log({ data });
     // dispatch(
@@ -162,213 +162,218 @@ export const ResetPasswordPage = () => {
 
   return (
     <>
-      <div className={style.container}>
-        <div
-          className={`${style.left_contents} hidden sm:hidden md:hidden lg:block`}
-        >
-          <Image src={bg_image} alt="Hero-Image" />
-        </div>
-        <Divider />
-        <div
-          className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}
-        >
-          <Title heading="Reset Password" />
-
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-1 flex-wrap">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="mb-2 block">
-                  <TextInput
-                    className="border-gray-300"
-                    id="email"
-                    name="email"
-                    type="email"
-                    color={
-                      handleErrorMessage(errors, "email")
-                        ? "failure"
-                        : "primary"
-                    }
-                    placeholder="Email"
-                    helperText={
-                      handleErrorMessage(errors, "email") ? (
-                        <span className="font-medium text-xs mt-0">
-                          {/* <span>Oops!</span> */}
-                          {handleErrorMessage(errors, "email")}
-                        </span>
-                      ) : null
-                    }
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: "Please enter valid email address",
-                      },
-                      validate: {
-                        notAccepted: (value) => {
-                          let invalidEmailTypes = [
-                            "gmail.com",
-                            "gmail.ca",
-                            "googlmail.com",
-                            "googlmail.ca",
-                            "hotmail.com",
-                            "hotmail.ca",
-                            "outlook.com",
-                            "outlook.ca",
-                            "yahoo.com",
-                            "yahoo.ca",
-                            "live.com",
-                            "live.ca",
-                            "icloud.com",
-                            "icloud.ca",
-                            "ymail.com",
-                            "ymail.ca",
-                          ];
-                          var emailArray = value.split("@");
-                          var email_stat = invalidEmailTypes.includes(
-                            emailArray[1]
-                          );
-                          // if (false) {
-                          //   setDisableSignUpButton(true);
-                          //   return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
-                          // } else {
-                          //   setDisableSignUpButton(false);
-                          // }
-                        },
-                      },
-                    })}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <div className="mb-2 block relative">
-                  <TextInput
-                    id="password"
-                    name="password"
-                    type={seePassword ? "password" : "text"}
-                    placeholder="New Password"
-                    color={
-                      handleErrorMessage(errors, "password")
-                        ? "failure"
-                        : "primary"
-                    }
-                    helperText={
-                      handleErrorMessage(errors, "password") ? (
-                        <span className="font-medium text-xs mt-0">
-                          {/* <span>Oops!</span> */}
-                          {handleErrorMessage(errors, "password")}
-                        </span>
-                      ) : null
-                    }
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: {
-                        value: 8,
-                        message: "Password must be at least 8 characters",
-                      },
-                    })}
-                  />
-
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: 10,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSeePassword(!seePassword)}
-                  >
-                    {seePassword ? (
-                      <AiFillEyeInvisible fontSize={20} />
-                    ) : (
-                      <AiFillEye fontSize={20} />
-                    )}
-                  </span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <div className="mb-2 block relative">
-                  <TextInput
-                    id="confirm_password"
-                    name="confirm_password"
-                    type={seeConfirmPassword ? "password" : "text"}
-                    placeholder="Confirm New Password"
-                    color={
-                      handleErrorMessage(errors, "confirm_password")
-                        ? "failure"
-                        : "primary"
-                    }
-                    helperText={
-                      handleErrorMessage(errors, "confirm_password") ? (
-                        <span className="font-medium text-xs mt-0">
-                          {/* <span>Oops!</span> */}
-                          {handleErrorMessage(errors, "confirm_password")}
-                        </span>
-                      ) : null
-                    }
-                    {...register("confirm_password", {
-                      required: "Confirmation Password is required",
-                      validate: (val) => {
-                        if (watch("password") != val) {
-                          return "Passwords do no match";
-                        }
-                      },
-                    })}
-                  />
-
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: 10,
-                      cursor: "pointer",
-                    }}
-                    onClick={() => setSeeConfirmPassword(!seeConfirmPassword)}
-                  >
-                    {seeConfirmPassword ? (
-                      <AiFillEyeInvisible fontSize={20} />
-                    ) : (
-                      <AiFillEye fontSize={20} />
-                    )}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <Button
-              disabled={isSubmitting}
-              size="md"
-              color="primary"
-              className={`w-full mt-1`}
-              type="submit"
-            >
-              <span className="text-md font-bold">
-                {isSubmitting && (
-                  <Spinner aria-label="Loader" className="mx-2" />
-                )}
-                {isSubmitting ? "Updating Password..." : `Update Password`}
-              </span>
-            </Button>
-          </form>
-          {apiError !== "" ? (
-            <p className="text-red-500 text-center px-0 py-2.5 inline-block">
-              {apiError}
-            </p>
-          ) : null}
-          <div className={`${style.success} inline-block`}>
-            {apiSuccess !== "" ? <p>{apiSuccess}</p> : null}
+      <div className="public-layout">
+        <div className="public-layout-inner">
+          <div className="public-layout-left">
+            <h1
+              className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
+              The #1 Choice <br />
+              for Business Shipping
+            </h1>
+            <Image src={bg_image} alt="Hero-Image" width={'380'} />
           </div>
-          <p className={`text-center text-lg font-semibold`}>
-            Don't have an account yet?{" "}
-            <Link className="text-shipGreen-400 font-semibold" href="/signup">
-              Sign Up
-            </Link>{" "}
-            Or{" "}
-            <Link className="text-shipGreen-400 font-semibold" href="/">
-              Log In
-            </Link>
-          </p>
+          <Divider />
+          <div
+            className="public-layout-right">
+            <Title heading="Reset Password" />
+            <form
+              autoComplete={'off'}
+              onSubmit={handleSubmit(onSubmit)}
+              className="w-full md:w-[60%]">
+              <div className="flex flex-col gap-1 flex-wrap mt-7">
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="mb-2 block">
+                    <TextInput
+                      className="border-gray-300"
+                      id="email"
+                      name="email"
+                      type="email"
+                      color={
+                        handleErrorMessage(errors, 'email')
+                          ? 'failure'
+                          : 'primary'
+                      }
+                      placeholder="Email"
+                      helperText={
+                        handleErrorMessage(errors, 'email') ? (
+                          <span className="font-medium text-xs mt-0">
+                            {/* <span>Oops!</span> */}
+                            {handleErrorMessage(errors, 'email')}
+                          </span>
+                        ) : null
+                      }
+                      {...register('email', {
+                        required: 'Email is required',
+                        pattern: {
+                          value: /\S+@\S+\.\S+/,
+                          message: 'Please enter valid email address',
+                        },
+                        validate: {
+                          notAccepted: (value) => {
+                            let invalidEmailTypes = [
+                              'gmail.com',
+                              'gmail.ca',
+                              'googlmail.com',
+                              'googlmail.ca',
+                              'hotmail.com',
+                              'hotmail.ca',
+                              'outlook.com',
+                              'outlook.ca',
+                              'yahoo.com',
+                              'yahoo.ca',
+                              'live.com',
+                              'live.ca',
+                              'icloud.com',
+                              'icloud.ca',
+                              'ymail.com',
+                              'ymail.ca',
+                            ];
+                            var emailArray = value.split('@');
+                            var email_stat = invalidEmailTypes.includes(
+                              emailArray[1]
+                            );
+                            // if (false) {
+                            //   setDisableSignUpButton(true);
+                            //   return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
+                            // } else {
+                            //   setDisableSignUpButton(false);
+                            // }
+                          },
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="mb-2 block relative">
+                    <TextInput
+                      id="password"
+                      name="password"
+                      type={seePassword ? 'password' : 'text'}
+                      placeholder="New Password"
+                      color={
+                        handleErrorMessage(errors, 'password')
+                          ? 'failure'
+                          : 'primary'
+                      }
+                      helperText={
+                        handleErrorMessage(errors, 'password') ? (
+                          <span className="font-medium text-xs mt-0">
+                            {/* <span>Oops!</span> */}
+                            {handleErrorMessage(errors, 'password')}
+                          </span>
+                        ) : null
+                      }
+                      {...register('password', {
+                        required: 'Password is required',
+                        minLength: {
+                          value: 8,
+                          message: 'Password must be at least 8 characters',
+                        },
+                      })}
+                    />
+
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 10,
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => setSeePassword(!seePassword)}>
+                      {seePassword ? (
+                        <AiFillEyeInvisible fontSize={20} />
+                      ) : (
+                        <AiFillEye fontSize={20} />
+                      )}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="mb-2 block relative">
+                    <TextInput
+                      id="confirm_password"
+                      name="confirm_password"
+                      type={seeConfirmPassword ? 'password' : 'text'}
+                      placeholder="Confirm New Password"
+                      color={
+                        handleErrorMessage(errors, 'confirm_password')
+                          ? 'failure'
+                          : 'primary'
+                      }
+                      helperText={
+                        handleErrorMessage(errors, 'confirm_password') ? (
+                          <span className="font-medium text-xs mt-0">
+                            {/* <span>Oops!</span> */}
+                            {handleErrorMessage(errors, 'confirm_password')}
+                          </span>
+                        ) : null
+                      }
+                      {...register('confirm_password', {
+                        required: 'Confirmation Password is required',
+                        validate: (val) => {
+                          if (watch('password') != val) {
+                            return 'Passwords do no match';
+                          }
+                        },
+                      })}
+                    />
+
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 10,
+                        cursor: 'pointer',
+                      }}
+                      onClick={() =>
+                        setSeeConfirmPassword(!seeConfirmPassword)
+                      }>
+                      {seeConfirmPassword ? (
+                        <AiFillEyeInvisible fontSize={20} />
+                      ) : (
+                        <AiFillEye fontSize={20} />
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                disabled={isSubmitting}
+                size="md"
+                color="primary"
+                className={`w-full mt-3 mb-6`}
+                type="submit">
+                <span className="text-md font-bold">
+                  {isSubmitting && (
+                    <Spinner aria-label="Loader" className="mx-2" />
+                  )}
+                  {isSubmitting ? 'Updating Password...' : `Update Password`}
+                </span>
+              </Button>
+            </form>
+            {apiError !== '' ? (
+              <p className="text-red-500 text-center px-0 py-2.5 inline-block">
+                {apiError}
+              </p>
+            ) : null}
+            <div className={`${style.success} inline-block`}>
+              {apiSuccess !== '' ? <p>{apiSuccess}</p> : null}
+            </div>
+            <p className={`text-center text-lg font-semibold`}>
+              Don't have an account yet?{' '}
+              <Link className="text-shipGreen-400 font-semibold" href="/signup">
+                Sign Up
+              </Link>{' '}
+              Or{' '}
+              <Link className="text-shipGreen-400 font-semibold" href="/">
+                Log In
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </>
