@@ -216,7 +216,7 @@ export const LoginPage = () => {
           className={`${style.divider} hidden sm:hidden md:hidden lg:block`}
         ></div>
         <div
-          className={`${style.right_contents} px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}
+          className={`${style.right_contents} lg:ml-12 px-5 sm:px-10 md:px-15 lg:px-20 w-full sm:w-full md:w-4/5 lg:w-1/2`}
         >
           <div className="flex flex-col items-center mb-4">
             <h1 className="text-[#08085E] inline-block text-[1.8rem] font-bold">
