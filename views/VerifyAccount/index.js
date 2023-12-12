@@ -9,6 +9,7 @@ import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication
 import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'flowbite-react';
+import Cookies from 'universal-cookie';
 
 export const VerifyAccount = () => {
   const router = useRouter();
@@ -18,8 +19,9 @@ export const VerifyAccount = () => {
   const [loading, setIsLoading] = useState(true);
   const { verifyEmail } = useSelector((state) => state.authenticationSlice);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  // const cookie = new Cookies();
+  const [isEmailAlreadyVerified, setIsEmailAlreadyVerified] = useState(false);
   const { verification_code } = router.query;
+  const cookies = new Cookies();
 
   // /**
   // * It gets the URL from the browser and extracts the userId & hashId from it.
@@ -41,7 +43,6 @@ export const VerifyAccount = () => {
    * Sets the Token & checks whether user is authenticated or not
    */
   useEffect(() => {
-
     // if (
     //   typeof user !== 'undefined' &&
     //   typeof user?.first_name == 'string' &&
@@ -57,9 +58,41 @@ export const VerifyAccount = () => {
           success: (response) => {
             console.log(response);
             setIsEmailVerified(true);
+            console.log(response.data);
+            if (response.data.length == 0) {
+              setIsEmailAlreadyVerified(true);
+              setIsLoading(false);
+              setTimeout(() => {
+                router.push('/');
+              }, 800);
+            } else {
+              if (response?.token) {
+                cookies.remove('shipSimpleToken');
+                cookies.remove('user');
+                cookies.remove('userId');
+                cookies.remove('shippingType');
+                cookies.set('shipSimpleToken', response.token, {
+                  path: '/',
+                  maxAge: 86400,
+                });
+                cookies.set('user', response.user, {
+                  path: '/',
+                  maxAge: 86400,
+                });
+                cookies.set('userId', response.user.id, {
+                  path: '/',
+                  maxAge: 86400,
+                });
+                cookies.set('shippingType', 'business', {
+                  path: '/',
+                  maxAge: 86400,
+                });
+                //router.push('/verifyAccount');
+              }
+            }
             setTimeout(() => {
-                setIsLoading(false);
-            }, 2000);
+              setIsLoading(false);
+            }, 1000);
             // const token = response.token;
             // cookie.set('shipSimpleToken', token, {path: '/'});
             // const id = response.id;
@@ -85,7 +118,9 @@ export const VerifyAccount = () => {
             return response;
           },
           error: (error) => {
-            setIsLoading(false);
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 1000);
             return error;
           },
         })
@@ -131,14 +166,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe>`}}></noscr
               <div className="flex flex-col items-center justify-center">
                 <Image src={party} alt="Hero-Image" />
                 <p className="text-2xl text-secondary-950 px-0 py-1 font-bold mt-5">
-                  Account Successfully Verified
+                  {!isEmailAlreadyVerified
+                    ? 'Account Successfully Verified'
+                    : 'Account Already Verified'}
                 </p>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <Image src={warning} alt="Hero-Image" />
                 <p className="text-xl text-red-600 px-0 py-1 font-semibold mt-5">
-                  Something went wrong. Please try again later.
+                  Invalid Verification Token.
                 </p>
               </div>
             )}
