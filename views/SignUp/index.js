@@ -57,7 +57,7 @@ export const SignUpPage = () => {
   // const [formErrors, setFormErrors] = useState({});
   const [seePassword, setSeePassword] = useState(false);
   // const [companyFull, setCompanyFull] = useState(true);
-  const [shippingType, setShippingType] = useState('');
+  const [shippingType, setShippingType] = useState('business');
   const [disableSignUpButton, setDisableSignUpButton] = useState(false);
   const [shopifyToken, setShopifyToken] = useState(null);
   const [resendEmail, setResendEmail] = useState(false);
@@ -197,24 +197,7 @@ export const SignUpPage = () => {
                   <div className="flex flex-col ">
                     <p className="font-semibold mr-3 mb-2"> Are you looking for:</p>
                     <div className='flex gap-5'>
-                    <div className="flex item-center">
-                      <Radio
-                        id="personal_shipping"
-                        name="shipping_type"
-                        value="personal"
-                        checked={shippingType == 'personal' ? true : false}
-                        className={`${style.shipping_radio} mr-2 mt-1`}
-                        onClick={handleChangeShippingType}
-                        {...register('shipping_type', {
-                          required: 'Required',
-                        })}
-                      />
-                      <Label
-                        htmlFor="personal_shipping"
-                        className="cursor-pointer">
-                        Personal Shipping
-                      </Label>
-                    </div>
+                    
                     <div className="flex item-center">
                       <Radio
                         id="business_shipping"
@@ -231,6 +214,24 @@ export const SignUpPage = () => {
                         htmlFor="business_shipping"
                         className="cursor-pointer">
                         Business Shipping
+                      </Label>
+                    </div>
+                    <div className="flex item-center">
+                      <Radio
+                        id="personal_shipping"
+                        name="shipping_type"
+                        value="personal"
+                        checked={shippingType == 'personal' ? true : false}
+                        className={`${style.shipping_radio} mr-2 mt-1`}
+                        onClick={handleChangeShippingType}
+                        {...register('shipping_type', {
+                          required: 'Required',
+                        })}
+                      />
+                      <Label
+                        htmlFor="personal_shipping"
+                        className="cursor-pointer">
+                        Personal Shipping
                       </Label>
                     </div>
                     </div>
