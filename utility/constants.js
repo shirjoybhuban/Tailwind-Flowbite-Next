@@ -1,5 +1,5 @@
 export const Constants = {
-    DEFAULT_ERROR_TEXT: "Something went wrong. Please try again. 😵",
+    DEFAULT_ERROR_TEXT: "Something went wrong. Please try again.",
     Api: {
         authentication: {
             registerWithEmailPassword: `${process.env.NEXT_PUBLIC_BASE_API_URL}/register`,

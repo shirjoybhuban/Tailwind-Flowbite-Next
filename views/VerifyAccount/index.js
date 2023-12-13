@@ -6,11 +6,12 @@ import warning from '../../public/images/warning.svg';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
-import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
+import { setUserDetails, setUserToken, usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'flowbite-react';
 import Cookies from 'universal-cookie';
 import { Divider } from 'components/layouts/common/Divider';
+import toast from 'react-hot-toast';
 
 export const VerifyAccount = () => {
   const router = useRouter();
@@ -43,6 +44,7 @@ export const VerifyAccount = () => {
   /**
    * Sets the Token & checks whether user is authenticated or not
    */
+  
   useEffect(() => {
     // if (
     //   typeof user !== 'undefined' &&
@@ -59,37 +61,47 @@ export const VerifyAccount = () => {
           success: (response) => {
             console.log(response);
             setIsEmailVerified(true);
-            if (response.data.length == 0) {
+            if (response?.data && response.data.length == 0) {
               setIsEmailAlreadyVerified(true);
               setTimeout(() => {
                 setIsLoading(false);
               }, 800);
+              toast.success("Account already verified. Redirecting to login...");
               setTimeout(() => {
                 router.push('/');
               }, 2000);
             } else {
               if (response?.token) {
+                let user = response.user;
+                let userId = response.user.id;
+                let accountType = response.account_type;
+                let token = response.token;
+                let newUser = {...user,account_type : accountType};
+
                 cookies.remove('shipSimpleToken');
                 cookies.remove('user');
                 cookies.remove('userId');
                 cookies.remove('shippingType');
-                cookies.set('shipSimpleToken', response.token, {
+                cookies.set('shipSimpleToken', token, {
                   path: '/',
                   maxAge: 86400,
                 });
-                cookies.set('user', response.user, {
+                cookies.set('user', newUser, {
                   path: '/',
                   maxAge: 86400,
                 });
-                cookies.set('userId', response.user.id, {
+                cookies.set('userId', userId, {
                   path: '/',
                   maxAge: 86400,
                 });
-                cookies.set('shippingType', 'business', {
+                cookies.set('shippingType', accountType, {
                   path: '/',
                   maxAge: 86400,
                 });
-                //router.push('/verifyAccount');
+                dispatch(setUserDetails(newUser));
+                dispatch(setUserToken(token));
+                toast.success("Verification completed. Please update your profile.");
+                router.push('/onboarding');
               }
             }
             setTimeout(() => {

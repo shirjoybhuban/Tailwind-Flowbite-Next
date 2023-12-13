@@ -3,7 +3,8 @@ import party from '../../public/images/party.png';
 import Image from 'next/image';
 import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { XHR_STATE } from 'utility/constants';
+import { Constants, XHR_STATE } from 'utility/constants';
+import toast from 'react-hot-toast';
 
 const ResendEmail = ({ userId }) => {
   const dispatch = useDispatch();
@@ -12,11 +13,13 @@ const ResendEmail = ({ userId }) => {
   );
   const resendEmail = () => {
     userId && dispatch(
-      authenticationDispatcher.resendVerificationEmail(userId, {
+      authenticationDispatcher.resendVerificationEmail(12312, {
         success: (response) => {
+          toast.success("A new link for account verification has been sent.");
           return response;
         },
         error: (error) => {
+          toast.error(Constants.DEFAULT_ERROR_TEXT);
           return error;
         },
       })

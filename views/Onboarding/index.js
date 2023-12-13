@@ -93,11 +93,11 @@ export const OnboardingPage = () => {
 
             <div className="w-[60%] flex flex-col text-center">
               <h1
-                className={`text-[40px] leading-[52px] text-5xl text-primary-400 mb-2 font-bold`}
+                className={`text-5xl text-primary-400 mb-2 font-bold`}
               >
                 My Profile
               </h1>
-              <p className="text-[#3f3f3f] font-semibold mt-1">
+              <p className="text-ternary-900 font-semibold mt-4 text-xl">
                 Complete your profile by filling in your Full Name, Company
                 Name, Address, Phone Number.
               </p>

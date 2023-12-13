@@ -9,7 +9,7 @@ import microsoft_icon from "../../public/images/microsoft.svg";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { XHR_STATE } from "utility/constants";
+import { Constants, XHR_STATE } from "utility/constants";
 import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
 import Head from "next/head";
 import {
@@ -134,21 +134,13 @@ export const SignUpPage = () => {
           setUserId(response.user_id);
           setResendEmail(true);
           toast.success("Sign Up Successful");
-          // if (response?.token) {
-          //     cookies.remove('shipSimpleToken');
-          //     cookies.remove('user');
-          //     cookies.remove('userId');
-          //     cookies.set('shipSimpleToken', response.token, { path: '/', maxAge: 86400 });
-          //     cookies.set('user', response.user, { path: '/' });
-          //     cookies.set('userId', response.user.id, { path: '/' });
-          //     cookies.set('shippingType', shippingType, { path: '/' });
-          //     router.push('/verifyAccount');
-          // }
-          // setFormData({});
-          // return response;
         },
-        error: (error) => {
-          console.log("error", error);
+        error: (err) => {
+          if(err.status == 422){
+
+          }else{
+            toast.error(Constants.DEFAULT_ERROR_TEXT);
+          }
         },
       })
     );
@@ -454,7 +446,7 @@ export const SignUpPage = () => {
 
               <div className="text-right float-right mt-3 w-full">
                 <Button
-                  disabled={isSubmitting}
+                  disabled={registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS}
                   size="md"
                   color="primary"
                   className={`w-full mb-2`}
@@ -465,9 +457,7 @@ export const SignUpPage = () => {
                       XHR_STATE.IN_PROGRESS && (
                       <Spinner aria-label="Loader" className="mx-2" />
                     )}
-                    {registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS
-                      ? "Signing Up..."
-                      : `Sign Up Now`}
+                    Sign Up Now
                   </span>
                 </Button>
               </div>

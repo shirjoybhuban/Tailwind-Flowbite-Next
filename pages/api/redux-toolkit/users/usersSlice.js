@@ -3,6 +3,8 @@ import { Constants, XHR_STATE } from "utility/constants";
 import { usersAPIs } from "./usersApi";
 
 export const initialState = {
+    userDetails: null,
+    userToken:null,
     viewUserProfile: {
         isLoading: true,
         response: null,
@@ -55,6 +57,12 @@ export const usersSlice = createSlice({
     name: "usersSlice",
     initialState,
     reducers: {
+        setUserDetails: (state, action) => {
+            state.userDetails = action.payload;
+        },
+        setUserToken: (state, action) => {
+            state.userToken = action.payload;
+        },
         // View User Profile
         viewUserProfileStarts: (state, action) => {
             state.viewUserProfile.isLoading = true;
@@ -406,6 +414,8 @@ export const usersDispatcher = {
 }
 
 export const {
+    setUserDetails,
+    setUserToken,
     viewUserProfileStarts,
     viewUserProfileSuccess,
     viewUserProfileError,

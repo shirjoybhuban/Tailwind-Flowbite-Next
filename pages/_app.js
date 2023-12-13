@@ -53,30 +53,26 @@ export default function App({ Component, pageProps }) {
         gutter={8}
         toastOptions={{
           success: {
-            duration: 2500,
+            duration: 3500,
             style: {
-              // background: '#B1ECB1',
-              background: "#22c55e",
-              color: "#fff",
+              background: "#c0f3bf",
+              color: "#000000",
               fontWeight: 500,
             },
           },
-
           error: {
-            duration: 2500,
+            duration: 3500,
             style: {
-              // background: '#B1ECB1',
-              background: "#f87171",
-              color: "#fff",
+              background: "rgb(254 202 202)",
+              color: "#000000",
               fontWeight: 500,
             },
           },
           custom: {
-            duration: 2500,
+            duration: 3500,
             style: {
-              // background: '#B1ECB1',
-              background: "#facc15",
-              color: "#fff",
+              background: "rgb(254 249 195)",
+              color: "#000000",
               fontWeight: 500,
             },
           },
