@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import style from './SignUp.module.scss';
-import bg_image from '../../public/images/hero.svg';
-import logo from '../../public/images/logo.svg';
-import shopify_logo from '../../public/images/shopify_logo.png';
-import google_icon from '../../public/images/google.svg';
-import microsoft_icon from '../../public/images/microsoft.svg';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
-import { XHR_STATE } from 'utility/constants';
-import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
-import Head from 'next/head';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import style from "./SignUp.module.scss";
+import bg_image from "../../public/images/hero.svg";
+import logo from "../../public/images/logo.svg";
+import shopify_logo from "../../public/images/shopify_logo.png";
+import google_icon from "../../public/images/google.svg";
+import microsoft_icon from "../../public/images/microsoft.svg";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { XHR_STATE } from "utility/constants";
+import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
+import Head from "next/head";
 import {
   TextInput,
   Select,
@@ -20,18 +20,19 @@ import {
   Button,
   Spinner,
   Radio,
-} from 'flowbite-react';
-import { ErrorMessage } from '@hookform/error-message';
-import { Controller, useForm } from 'react-hook-form';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useEffectOnce } from 'hooks/useEffectOnce';
-import { useSearchParams } from 'next/navigation';
+} from "flowbite-react";
+import { ErrorMessage } from "@hookform/error-message";
+import { Controller, useForm } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useEffectOnce } from "hooks/useEffectOnce";
+import { useSearchParams } from "next/navigation";
 
-import Cookies from 'universal-cookie';
-import { handleErrorMessage } from 'utility/utilityFunctions';
-import { Title } from 'components/layouts/common/Title';
-import { Divider } from 'components/layouts/common/Divider';
-import ResendEmail from 'components/verify-account/ResendEmail';
+import Cookies from "universal-cookie";
+import { handleErrorMessage } from "utility/utilityFunctions";
+import { Title } from "components/layouts/common/Title";
+import { Divider } from "components/layouts/common/Divider";
+import ResendEmail from "components/verify-account/ResendEmail";
+import toast from "react-hot-toast";
 export const SignUpPage = () => {
   // const hasWindow = typeof window !== 'undefined';
 
@@ -44,7 +45,7 @@ export const SignUpPage = () => {
   //     };
   // }
   const searchParams = useSearchParams();
-  const shpfyTkn = searchParams.get('shopify_integration');
+  const shpfyTkn = searchParams.get("shopify_integration");
   const [loading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const { registerWithEmailPassword } = useSelector(
@@ -52,12 +53,12 @@ export const SignUpPage = () => {
   );
   const router = useRouter();
   // const [formData, setFormData] = useState({});
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
   // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   // const [formErrors, setFormErrors] = useState({});
   const [seePassword, setSeePassword] = useState(false);
   // const [companyFull, setCompanyFull] = useState(true);
-  const [shippingType, setShippingType] = useState('business');
+  const [shippingType, setShippingType] = useState("business");
   const [disableSignUpButton, setDisableSignUpButton] = useState(false);
   const [shopifyToken, setShopifyToken] = useState(null);
   const [resendEmail, setResendEmail] = useState(false);
@@ -72,7 +73,7 @@ export const SignUpPage = () => {
     setError,
     reset,
     control,
-  } = useForm({ mode: 'onBlur' });
+  } = useForm({ mode: "onBlur" });
   // /**
   //  * Updates about the various phases of endpoints i.e. In Progress, Complete & Aslepp.
   //  */
@@ -115,7 +116,7 @@ export const SignUpPage = () => {
   //  */
   const onSubmit = async (data) => {
     let userCredentials = {
-      company_name: shippingType == 'personal' ? '' : data.company_name,
+      company_name: shippingType == "personal" ? "" : data.company_name,
       email: data.email,
       password: data.password,
       password_confirmation: data.password,
@@ -132,6 +133,7 @@ export const SignUpPage = () => {
         success: (response) => {
           setUserId(response.user_id);
           setResendEmail(true);
+          toast.success("Sign Up Successful");
           // if (response?.token) {
           //     cookies.remove('shipSimpleToken');
           //     cookies.remove('user');
@@ -146,7 +148,7 @@ export const SignUpPage = () => {
           // return response;
         },
         error: (error) => {
-          console.log('error', error);
+          console.log("error", error);
         },
       })
     );
@@ -159,21 +161,20 @@ export const SignUpPage = () => {
   return (
     <div className="public-layout">
       <div className="public-layout-inner">
-        <div
-          className="public-layout-left">
+        <div className="public-layout-left">
           <h1
-            className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
+            className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}
+          >
             The #1 Choice <br />
             for Business Shipping
           </h1>
-          <Image src={bg_image} alt="Hero-Image" width={'380'} />
+          <Image src={bg_image} alt="Hero-Image" width={"380"} />
         </div>
         <Divider />
         {resendEmail && userId ? (
           <ResendEmail userId={userId} />
         ) : (
-          <div
-            className="public-layout-right">
+          <div className="public-layout-right">
             {shopifyToken && (
               <div className="flex justify-center">
                 <Image src={logo} alt="Company Logo" />
@@ -181,7 +182,7 @@ export const SignUpPage = () => {
                   <Image
                     src={shopify_logo}
                     alt="Shopify Company Logo"
-                    style={{ width: '70px', height: '70px' }}
+                    style={{ width: "70px", height: "70px" }}
                   />
                 </div>
               </div>
@@ -190,54 +191,60 @@ export const SignUpPage = () => {
             <form
               className="w-full md:w-[60%]"
               noValidate
-              autoComplete={'off'}
-              onSubmit={handleSubmit(onSubmit)}>
+              autoComplete={"off"}
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex flex-col gap-1 flex-wrap mt-7">
                 <div className="flex w-full items-center gap-1 flex-wrap mb-2">
                   <div className="flex flex-col ">
-                    <p className="font-semibold mr-3 mb-2"> Are you looking for:</p>
-                    <div className='flex gap-5'>
-                    
-                    <div className="flex item-center">
-                      <Radio
-                        id="business_shipping"
-                        name="shipping_type"
-                        value="business"
-                        checked={shippingType == 'business' ? true : false}
-                        className={`${style.shipping_radio} mr-2 mt-1`}
-                        onClick={handleChangeShippingType}
-                        {...register('shipping_type', {
-                          required: 'Please make a selection',
-                        })}
-                      />
-                      <Label
-                        htmlFor="business_shipping"
-                        className="cursor-pointer">
-                        Business Shipping
-                      </Label>
-                    </div>
-                    <div className="flex item-center">
-                      <Radio
-                        id="personal_shipping"
-                        name="shipping_type"
-                        value="personal"
-                        checked={shippingType == 'personal' ? true : false}
-                        className={`${style.shipping_radio} mr-2 mt-1`}
-                        onClick={handleChangeShippingType}
-                        {...register('shipping_type', {
-                          required: 'Required',
-                        })}
-                      />
-                      <Label
-                        htmlFor="personal_shipping"
-                        className="cursor-pointer">
-                        Personal Shipping
-                      </Label>
-                    </div>
+                    <p className="font-semibold mr-3 mb-2">
+                      {" "}
+                      Are you looking for:
+                    </p>
+                    <div className="flex gap-5">
+                      <div className="flex item-center">
+                        <Radio
+                          id="business_shipping"
+                          name="shipping_type"
+                          value="business"
+                          checked={shippingType == "business" ? true : false}
+                          className={`${style.shipping_radio} mr-2 mt-1`}
+                          onClick={handleChangeShippingType}
+                          {...register("shipping_type", {
+                            required: "Please make a selection",
+                          })}
+                        />
+                        <Label
+                          htmlFor="business_shipping"
+                          className="cursor-pointer"
+                        >
+                          Business Shipping
+                        </Label>
+                      </div>
+                      <div className="flex item-center">
+                        <Radio
+                          id="personal_shipping"
+                          name="shipping_type"
+                          value="personal"
+                          checked={shippingType == "personal" ? true : false}
+                          className={`${style.shipping_radio} mr-2 mt-1`}
+                          onClick={handleChangeShippingType}
+                          {...register("shipping_type", {
+                            required: "Required",
+                          })}
+                        />
+                        <Label
+                          htmlFor="personal_shipping"
+                          className="cursor-pointer"
+                        >
+                          Personal Shipping
+                        </Label>
+                      </div>
                     </div>
                   </div>
                   <span
-                    className={`text-red-500 font-bold text-xs ml-1 flex-1`}>
+                    className={`text-red-500 font-bold text-xs ml-1 flex-1`}
+                  >
                     <ErrorMessage errors={errors} name="shipping_type" />
                   </span>
                 </div>
@@ -247,28 +254,28 @@ export const SignUpPage = () => {
                     <div>
                       <TextInput
                         color={
-                          handleErrorMessage(errors, 'company_name')
-                            ? 'failure'
-                            : 'primary'
+                          handleErrorMessage(errors, "company_name")
+                            ? "failure"
+                            : "primary"
                         }
                         id="company_name"
                         name="company_name"
                         type="text"
-                        disabled={shippingType == 'personal'}
+                        disabled={shippingType == "personal"}
                         placeholder={`Company Name`}
-                        {...register('company_name', {
+                        {...register("company_name", {
                           validate: {
                             required: (value) => {
-                              if (shippingType == 'business' && !value)
-                                return 'Company name is required';
+                              if (shippingType == "business" && !value)
+                                return "Company name is required";
                               return true;
                             },
                           },
                         })}
                         helperText={
-                          handleErrorMessage(errors, 'company_name') ? (
+                          handleErrorMessage(errors, "company_name") ? (
                             <span className="font-medium text-xs mt-0">
-                              {handleErrorMessage(errors, 'company_name')}
+                              {handleErrorMessage(errors, "company_name")}
                             </span>
                           ) : null
                         }
@@ -285,51 +292,51 @@ export const SignUpPage = () => {
                       name="email"
                       type="email"
                       color={
-                        handleErrorMessage(errors, 'email')
-                          ? 'failure'
-                          : 'primary'
+                        handleErrorMessage(errors, "email")
+                          ? "failure"
+                          : "primary"
                       }
                       placeholder="Email"
                       helperText={
-                        handleErrorMessage(errors, 'email') ? (
+                        handleErrorMessage(errors, "email") ? (
                           <span className="font-medium text-xs mt-0">
-                            {handleErrorMessage(errors, 'email')}
+                            {handleErrorMessage(errors, "email")}
                           </span>
                         ) : null
                       }
-                      {...register('email', {
-                        required: 'Email is required',
+                      {...register("email", {
+                        required: "Email is required",
                         pattern: {
                           value: /\S+@\S+\.\S+/,
-                          message: 'Please enter valid email address',
+                          message: "Please enter valid email address",
                         },
                         validate: {
                           notAccepted: (value) => {
                             let invalidEmailTypes = [
-                              'gmail.com',
-                              'gmail.ca',
-                              'googlmail.com',
-                              'googlmail.ca',
-                              'hotmail.com',
-                              'hotmail.ca',
-                              'outlook.com',
-                              'outlook.ca',
-                              'yahoo.com',
-                              'yahoo.ca',
-                              'live.com',
-                              'live.ca',
-                              'icloud.com',
-                              'icloud.ca',
-                              'ymail.com',
-                              'ymail.ca',
+                              "gmail.com",
+                              "gmail.ca",
+                              "googlmail.com",
+                              "googlmail.ca",
+                              "hotmail.com",
+                              "hotmail.ca",
+                              "outlook.com",
+                              "outlook.ca",
+                              "yahoo.com",
+                              "yahoo.ca",
+                              "live.com",
+                              "live.ca",
+                              "icloud.com",
+                              "icloud.ca",
+                              "ymail.com",
+                              "ymail.ca",
                             ];
-                            var emailArray = value.split('@');
+                            var emailArray = value.split("@");
                             var email_stat = invalidEmailTypes.includes(
                               emailArray[1]
                             );
                             if (false) {
                               setDisableSignUpButton(true);
-                              return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
+                              return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
                             } else {
                               setDisableSignUpButton(false);
                             }
@@ -345,41 +352,45 @@ export const SignUpPage = () => {
                     <TextInput
                       id="password"
                       name="password"
-                      type={seePassword ? 'text' : 'password'}
+                      type={seePassword ? "text" : "password"}
                       placeholder="Password"
                       color={
-                        handleErrorMessage(errors, 'password')
-                          ? 'failure'
-                          : 'primary'
+                        handleErrorMessage(errors, "password")
+                          ? "failure"
+                          : "primary"
                       }
                       helperText={
-                        handleErrorMessage(errors, 'password') ? (
+                        handleErrorMessage(errors, "password") ? (
                           <span className="font-medium text-xs mt-0">
-                            {handleErrorMessage(errors, 'password')}
+                            {handleErrorMessage(errors, "password")}
                           </span>
                         ) : null
                       }
-                      {...register('password', {
-                        required: 'Password is required',
+                      {...register("password", {
+                        required: "Password is required",
                         minLength: {
                           value: 8,
-                          message: 'Password must be at least 8 characters',
+                          message: "Password must be at least 8 characters",
                         },
                       })}
                     />
 
                     <span
                       style={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 12,
                         right: 10,
-                        cursor: 'pointer',
+                        cursor: "pointer",
                       }}
-                      onClick={() => setSeePassword(!seePassword)}>
+                      onClick={() => setSeePassword(!seePassword)}
+                    >
                       {seePassword ? (
-                        <AiFillEyeInvisible fontSize={18} className='text-slate-400' />
+                        <AiFillEyeInvisible
+                          fontSize={18}
+                          className="text-slate-400"
+                        />
                       ) : (
-                        <AiFillEye fontSize={18} className='text-slate-400' />
+                        <AiFillEye fontSize={18} className="text-slate-400" />
                       )}
                     </span>
                   </div>
@@ -392,7 +403,7 @@ export const SignUpPage = () => {
                       name="no_of_courier"
                       type="number"
                       placeholder="How many shipments do you send per week?"
-                      {...register('no_of_courier')}
+                      {...register("no_of_courier")}
                     />
                   </div>
                 </div>
@@ -407,15 +418,17 @@ export const SignUpPage = () => {
                         <Select
                           className="focus:outline-none"
                           style={{
-                            borderColor: error ? '#ef4444' : '#d1d5db',
-                            outline: 'none',
+                            borderColor: error ? "#ef4444" : "#d1d5db",
+                            outline: "none",
                           }}
+                          color={error ? "failure" : "primary"}
                           id="how_hear"
                           name="how_hear"
                           value={value}
                           onChange={onChange}
                           onBlur={onBlur}
-                          inputRef={ref}>
+                          inputRef={ref}
+                        >
                           <option value="">How did you hear about us? </option>
                           <option value="Google">Google</option>
                           <option value="Instagram">Instagram</option>
@@ -427,7 +440,7 @@ export const SignUpPage = () => {
                       )}
                       name="how_hear"
                       control={control}
-                      rules={{ required: 'this is required' }}
+                      rules={{ required: "this is required" }}
                     />
 
                     {errors?.how_hear ? (
@@ -445,50 +458,54 @@ export const SignUpPage = () => {
                   size="md"
                   color="primary"
                   className={`w-full mb-2`}
-                  type="submit">
+                  type="submit"
+                >
                   <span className="text-md font-bold">
                     {registerWithEmailPassword.loading ===
                       XHR_STATE.IN_PROGRESS && (
                       <Spinner aria-label="Loader" className="mx-2" />
                     )}
                     {registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS
-                      ? 'Signing Up...'
+                      ? "Signing Up..."
                       : `Sign Up Now`}
                   </span>
                 </Button>
               </div>
             </form>
             <div>
-              {apiError !== '' ? (
+              {apiError !== "" ? (
                 <p className="text-red-500 text-center px-0 py-2.5 inline-block">
                   {apiError}
                 </p>
               ) : null}
 
               <p className={`text-center mt-6`}>
-                By registering you agree to our{' '}
+                By registering you agree to our{" "}
                 <a
                   href="https://shipsimple.ca/terms-and-conditions/"
                   target="_blank"
                   className={`text-secondary-950 font-semibold underline`}
-                  rel="noreferrer">
+                  rel="noreferrer"
+                >
                   Terms of Service
-                </a>{' '}
-                and{' '}
+                </a>{" "}
+                and{" "}
                 <a
                   href="https://shipsimple.ca/privacy-policy/"
                   target="_blank"
                   className={`text-secondary-950  font-semibold underline`}
-                  rel="noreferrer">
+                  rel="noreferrer"
+                >
                   Privacy Policy
                 </a>
                 .
               </p>
               <p className={`text-center mt-2 text-lg font-semibold`}>
-                Already have an account?{' '}
+                Already have an account?{" "}
                 <Link
                   className="text-shipGreen-400 font-semibold tracking-wider"
-                  href="/">
+                  href="/"
+                >
                   Login
                 </Link>
               </p>

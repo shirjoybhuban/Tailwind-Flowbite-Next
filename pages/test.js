@@ -1,5 +1,5 @@
-import AuthLayout from 'components/layouts/AuthLayout';
-import Layout from 'components/layouts/Layout';
+import AuthLayout from "components/layouts/AuthLayout";
+import Layout from "components/layouts/Layout";
 import {
   Button,
   Checkbox,
@@ -10,16 +10,18 @@ import {
   TextInput,
   Textarea,
   Tooltip,
-} from 'flowbite-react';
-import { Inter } from 'next/font/google';
-import { BiAnchor, BiHelpCircle, BiHighlight } from 'react-icons/bi';
-import { GiHamburgerMenu } from 'react-icons/gi';
+} from "flowbite-react";
+import { Inter } from "next/font/google";
+import toast from "react-hot-toast";
+import { BiAnchor, BiHelpCircle, BiHighlight } from "react-icons/bi";
+import { GiHamburgerMenu } from "react-icons/gi";
 import {
   HiCog,
   HiLogout,
   HiOutlineArrowRight,
   HiOutlineExclamationCircle,
-} from 'react-icons/hi';
+} from "react-icons/hi";
+import { MdOutlineWarningAmber } from "react-icons/md";
 const Test = () => {
   return (
     <Layout>
@@ -43,7 +45,8 @@ const Test = () => {
               <span className="cursor-pointer">
                 <GiHamburgerMenu className="w-7 h-7" />
               </span>
-            )}>
+            )}
+          >
             <Dropdown.Header>
               <span className="block text-sm font-semibold">Bonnie Green</span>
               <span className="block truncate text-sm font-medium">
@@ -66,7 +69,8 @@ const Test = () => {
             content="Some couriers, such as Purolator, require a valid local phone number in order to process the quote and provide a rate. 1-800 numbers are not accepted."
             style="light"
             className="border-2 border-secondary-900 bg-secondary-50 md:w-1/5  "
-            arrow={false}>
+            arrow={false}
+          >
             <HiOutlineExclamationCircle className="w-5 h-5 text-secondary-700" />
           </Tooltip>
         </div>
@@ -167,7 +171,7 @@ const Test = () => {
             Next
             <HiOutlineArrowRight className="ml-2 h-5 w-5" />
           </Button>
-          <Button size="md" color="primary" isProcessing className='w-full'>
+          <Button size="md" color="primary" isProcessing className="w-full">
             Click me!
           </Button>
           <Button color="primary" disabled>
@@ -216,10 +220,42 @@ const Test = () => {
             <option>Germany</option>
           </Select>
           <div className="flex items-center gap-2 mt-4">
-            <Checkbox id="promotion" color={'green'} />
+            <Checkbox id="promotion" color={"green"} />
             <Label htmlFor="promotion">I want to get promotional offers</Label>
           </div>
 
+          <div className="flex gap-2 my-10">
+            <Button
+              color="primary"
+              onClick={() => {
+                toast.success("Build Done");
+              }}
+            >
+              Success Toast
+            </Button>
+
+            <Button
+              color="failure"
+              onClick={() => {
+                toast.error("Build Failed");
+              }}
+            >
+              Error Toast
+            </Button>
+
+            <Button
+              onClick={() => {
+                toast.custom(
+                  <div className="flex items-center bg-yellow-400 text-white gap-2 rounded-lg p-2">
+                    <MdOutlineWarningAmber fontSize={"25px"} />
+                    <p>Some Thing Went Wrong</p>
+                  </div>
+                );
+              }}
+            >
+              Custom Toast
+            </Button>
+          </div>
           <fieldset className="flex max-w-md flex-col gap-4">
             <legend className="mb-4">Choose your favorite country</legend>
             <div className="flex items-center gap-2">
@@ -265,8 +301,7 @@ const Test = () => {
         <h4 className="text-lg font-bold">Autocomplete</h4>
       </div>
     </Layout>
-    
-  )
-}
+  );
+};
 
-export default Test
+export default Test;

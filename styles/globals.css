@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 
+.iconBg{
+  background: radial-gradient(
+    ellipse at center,
+    #33cd32 60%,
+    rgba(51, 205, 50, 0.25) 0
+  );
+}
 
 @layer components {
   .public-layout {
@@ -17,7 +24,14 @@
   .public-layout-right {
     @apply w-full sm:w-full md:w-4/5 lg:w-1/2 flex flex-col justify-center items-center;
   }
+  
+  input[type=text], input[type=tel]{
+    @apply border-gray-300 shadow-sm-light
+  }
+
+  
 }
+
 
 /* :root {
   --foreground-rgb: 0, 0, 0;

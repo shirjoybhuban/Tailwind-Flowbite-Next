@@ -1,17 +1,17 @@
-import Image from 'next/image';
-import { useState } from 'react';
-import bg_image from '../../public/images/hero.svg';
-import style from './Login.module.scss';
-import { Button, Checkbox, Label, Spinner, TextInput } from 'flowbite-react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { authenticationDispatcher } from 'pages/api/redux-toolkit/authentication/authenticationSlice';
-import { useForm } from 'react-hook-form';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleErrorMessage } from 'utility/utilityFunctions';
-import { Title } from 'components/layouts/common/Title';
-import { Divider } from 'components/layouts/common/Divider';
+import Image from "next/image";
+import { useState } from "react";
+import bg_image from "../../public/images/hero.svg";
+import style from "./Login.module.scss";
+import { Button, Checkbox, Label, Spinner, TextInput } from "flowbite-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
+import { useForm } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { handleErrorMessage } from "utility/utilityFunctions";
+import { Title } from "components/layouts/common/Title";
+import { Divider } from "components/layouts/common/Divider";
 
 export const LoginPage = () => {
   // const [loading, setIsLoading] = useState(false);
@@ -21,7 +21,7 @@ export const LoginPage = () => {
   );
   const router = useRouter();
   // const [formData, setFormData] = useState({});
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
   // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   // const [formErrors, setFormErrors] = useState({});
   // const cookies = new Cookies();
@@ -106,11 +106,11 @@ export const LoginPage = () => {
     setError,
     reset,
     control,
-  } = useForm({ mode: 'onBlur' });
+  } = useForm({ mode: "onBlur" });
 
   const onSubmit = async (data) => {
     // event.preventDefault();
-    setApiError('');
+    setApiError("");
     let userCredentials = {
       email: data.email,
       password: data.password,
@@ -168,7 +168,7 @@ export const LoginPage = () => {
   // * @returns {string} Sets the value of each input field in their respective name.
   // */
   const handleChange = (index, event) => {
-    if (event.target.type === 'checkbox') {
+    if (event.target.type === "checkbox") {
       setFormData({ ...formData, [event.target.name]: event.target.checked });
     } else {
       setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -181,16 +181,20 @@ export const LoginPage = () => {
         <div className="public-layout-inner">
           <div className="public-layout-left">
             <h1
-              className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}>
+              className={`text-[40px] leading-[52px] text-secondary-950 mb-8 font-bold`}
+            >
               The #1 Choice <br />
               for Business Shipping
             </h1>
-            <Image src={bg_image} alt="Hero-Image" width={'380'} />
+            <Image src={bg_image} alt="Hero-Image" width={"380"} />
           </div>
           <Divider />
           <div className="public-layout-right">
             <Title heading="Welcome Back" />
-            <form className="w-full md:w-[60%]" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="w-full md:w-[60%]"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex flex-col gap-1 flex-wrap mt-7">
                 <div className="grid grid-cols-1 gap-4">
                   <div className="mb-2 block">
@@ -200,52 +204,52 @@ export const LoginPage = () => {
                       name="email"
                       type="email"
                       color={
-                        handleErrorMessage(errors, 'email')
-                          ? 'failure'
-                          : 'primary'
+                        handleErrorMessage(errors, "email")
+                          ? "failure"
+                          : "primary"
                       }
                       placeholder="Email"
                       helperText={
-                        handleErrorMessage(errors, 'email') ? (
+                        handleErrorMessage(errors, "email") ? (
                           <span className="font-medium text-xs mt-0">
                             {/* <span>Oops!</span> */}
-                            {handleErrorMessage(errors, 'email')}
+                            {handleErrorMessage(errors, "email")}
                           </span>
                         ) : null
                       }
-                      {...register('email', {
-                        required: 'Email is required',
+                      {...register("email", {
+                        required: "Email is required",
                         pattern: {
                           value: /\S+@\S+\.\S+/,
-                          message: 'Please enter valid email address',
+                          message: "Please enter valid email address",
                         },
                         validate: {
                           notAccepted: (value) => {
                             let invalidEmailTypes = [
-                              'gmail.com',
-                              'gmail.ca',
-                              'googlmail.com',
-                              'googlmail.ca',
-                              'hotmail.com',
-                              'hotmail.ca',
-                              'outlook.com',
-                              'outlook.ca',
-                              'yahoo.com',
-                              'yahoo.ca',
-                              'live.com',
-                              'live.ca',
-                              'icloud.com',
-                              'icloud.ca',
-                              'ymail.com',
-                              'ymail.ca',
+                              "gmail.com",
+                              "gmail.ca",
+                              "googlmail.com",
+                              "googlmail.ca",
+                              "hotmail.com",
+                              "hotmail.ca",
+                              "outlook.com",
+                              "outlook.ca",
+                              "yahoo.com",
+                              "yahoo.ca",
+                              "live.com",
+                              "live.ca",
+                              "icloud.com",
+                              "icloud.ca",
+                              "ymail.com",
+                              "ymail.ca",
                             ];
-                            var emailArray = value.split('@');
+                            var emailArray = value.split("@");
                             var email_stat = invalidEmailTypes.includes(
                               emailArray[1]
                             );
                             if (false) {
                               setDisableSignUpButton(true);
-                              return 'Email address has not been accepted, if this is in error please call 1-888-210-8910';
+                              return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
                             } else {
                               setDisableSignUpButton(false);
                             }
@@ -261,42 +265,46 @@ export const LoginPage = () => {
                     <TextInput
                       id="password"
                       name="password"
-                      type={seePassword ? 'text' : 'password'}
+                      type={seePassword ? "text" : "password"}
                       placeholder="Password"
                       color={
-                        handleErrorMessage(errors, 'password')
-                          ? 'failure'
-                          : 'primary'
+                        handleErrorMessage(errors, "password")
+                          ? "failure"
+                          : "primary"
                       }
                       helperText={
-                        handleErrorMessage(errors, 'password') ? (
+                        handleErrorMessage(errors, "password") ? (
                           <span className="font-medium text-xs mt-0">
                             {/* <span>Oops!</span> */}
-                            {handleErrorMessage(errors, 'password')}
+                            {handleErrorMessage(errors, "password")}
                           </span>
                         ) : null
                       }
-                      {...register('password', {
-                        required: 'Password is required',
+                      {...register("password", {
+                        required: "Password is required",
                         minLength: {
                           value: 8,
-                          message: 'Password must be at least 8 characters',
+                          message: "Password must be at least 8 characters",
                         },
                       })}
                     />
 
                     <span
                       style={{
-                        position: 'absolute',
+                        position: "absolute",
                         top: 12,
                         right: 10,
-                        cursor: 'pointer',
+                        cursor: "pointer",
                       }}
-                      onClick={() => setSeePassword(!seePassword)}>
+                      onClick={() => setSeePassword(!seePassword)}
+                    >
                       {seePassword ? (
-                        <AiFillEyeInvisible fontSize={18} className='text-slate-400' />
+                        <AiFillEyeInvisible
+                          fontSize={18}
+                          className="text-slate-400"
+                        />
                       ) : (
-                        <AiFillEye fontSize={18} className='text-slate-400' />
+                        <AiFillEye fontSize={18} className="text-slate-400" />
                       )}
                     </span>
                   </div>
@@ -307,16 +315,20 @@ export const LoginPage = () => {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       id="rememberme"
-                      color={'green'}
-                      {...register('remberme')}
+                      color={"primary"}
+                      {...register("remberme")}
                     />
                     <Label
                       htmlFor="rememberme"
-                      className="cursor-pointer text-secondary-950">
+                      className="cursor-pointer text-secondary-950"
+                    >
                       Remember Me
                     </Label>
                   </div>
-                  <Link href="/forgot-password" className="text-secondary-950 text-sm">
+                  <Link
+                    href="/forgot-password"
+                    className="text-secondary-950 text-sm"
+                  >
                     Forgot Password?
                   </Link>
                 </div>
@@ -326,24 +338,25 @@ export const LoginPage = () => {
                 size="md"
                 color="primary"
                 className={`w-full mb-6 mt-4`}
-                type="submit">
+                type="submit"
+              >
                 <span className="text-md font-bold">
                   {isSubmitting && (
                     <Spinner aria-label="Loader" className="mx-2" />
                   )}
-                  {isSubmitting ? 'Logging In...' : `Log In`}
+                  {isSubmitting ? "Logging In..." : `Log In`}
                 </span>
               </Button>
             </form>
 
-            {apiError !== '' ? (
+            {apiError !== "" ? (
               <p className="text-red-500 text-center px-0 py-2.5 inline-block">
                 {apiError}
               </p>
             ) : null}
 
             <p className={`text-center mt-2 text-lg font-semibold`}>
-              Don't have an account yet?{' '}
+              Don't have an account yet?{" "}
               <Link className="text-shipGreen-400 font-semibold" href="/signup">
                 Sign Up
               </Link>
