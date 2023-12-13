@@ -13,6 +13,7 @@ import { handleErrorMessage } from 'utility/utilityFunctions';
 import { useForm } from 'react-hook-form';
 import { Button, Spinner, TextInput } from 'flowbite-react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { useSearchParams } from 'next/navigation';
 
 export const ResetPasswordPage = () => {
   // const formDetails = [
@@ -41,14 +42,18 @@ export const ResetPasswordPage = () => {
   //         sizing: "100%"
   //     },
   // ];
-  // const [loading, setIsLoading] = useState(false);
-  // const dispatch = useDispatch();
-  // const { resetPassword } = useSelector(state => state.authenticationSlice);
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { resetPassword } = useSelector(state => state.authenticationSlice);
   // const [formData, setFormData] = useState({});
   const [apiError, setApiError] = useState('');
   const [apiSuccess, setApiSuccess] = useState('');
   const [seePassword, setSeePassword] = useState(false);
   const [seeConfirmPassword, setSeeConfirmPassword] = useState(false);
+  const router = useRouter();
+  const queryParams = useSearchParams();
+  const resetEmail = queryParams.get('email');
+  const resetToken = queryParams.get('resetLink');
 
   // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   // const [formErrors, setFormErrors] = useState({});
@@ -116,23 +121,26 @@ export const ResetPasswordPage = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setApiError('');
-    data.token = resetToken;
+    setApiSuccess('');
     console.log({ data });
-    // dispatch(
-    //   authenticationDispatcher.resetPassword(data, currentToken, {
-    //     success: (response) => {
-    //       let payload = {
-    //         email: data.email,
-    //         password: data.password,
-    //       };
-    //       login(payload);
-    //       setApiSuccess(response.message);
-    //       setFormData({});
-    //       setIsLoading(false);
-    //       return response;
-    //     },
-    //   })
-    // );
+    data.token = resetToken;
+    data.email = resetEmail;
+    dispatch(
+      authenticationDispatcher.resetPassword(data, {
+        success: (response) => {
+          setApiSuccess(response.message);
+          setIsLoading(false);
+          setTimeout(() => {
+            router.push('/');
+          }, 800);
+          return response;
+        },
+        error: (error) => {
+          setIsLoading(false);
+          setApiError(error?.data?.message);
+        },
+      })
+    );
   };
 
   // const login = (credentials) => {
@@ -188,6 +196,8 @@ export const ResetPasswordPage = () => {
                       id="email"
                       name="email"
                       type="email"
+                      defaultValue={resetEmail}
+                      disabled={true}
                       color={
                         handleErrorMessage(errors, 'email')
                           ? 'failure'
@@ -202,45 +212,7 @@ export const ResetPasswordPage = () => {
                           </span>
                         ) : null
                       }
-                      {...register('email', {
-                        required: 'Email is required',
-                        pattern: {
-                          value: /\S+@\S+\.\S+/,
-                          message: 'Please enter valid email address',
-                        },
-                        validate: {
-                          notAccepted: (value) => {
-                            let invalidEmailTypes = [
-                              'gmail.com',
-                              'gmail.ca',
-                              'googlmail.com',
-                              'googlmail.ca',
-                              'hotmail.com',
-                              'hotmail.ca',
-                              'outlook.com',
-                              'outlook.ca',
-                              'yahoo.com',
-                              'yahoo.ca',
-                              'live.com',
-                              'live.ca',
-                              'icloud.com',
-                              'icloud.ca',
-                              'ymail.com',
-                              'ymail.ca',
-                            ];
-                            var emailArray = value.split('@');
-                            var email_stat = invalidEmailTypes.includes(
-                              emailArray[1]
-                            );
-                            // if (false) {
-                            //   setDisableSignUpButton(true);
-                            //   return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
-                            // } else {
-                            //   setDisableSignUpButton(false);
-                            // }
-                          },
-                        },
-                      })}
+                      {...register('email', {})}
                     />
                   </div>
                 </div>
@@ -342,16 +314,16 @@ export const ResetPasswordPage = () => {
               </div>
 
               <Button
-                disabled={isSubmitting}
+                disabled={isLoading}
                 size="md"
                 color="primary"
                 className={`w-full mt-3 mb-6`}
                 type="submit">
                 <span className="text-md font-bold">
-                  {isSubmitting && (
+                  {isLoading && (
                     <Spinner aria-label="Loader" className="mx-2" />
                   )}
-                  {isSubmitting ? 'Updating Password...' : `Update Password`}
+                  Update Password
                 </span>
               </Button>
             </form>

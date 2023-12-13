@@ -18,13 +18,13 @@ export const authenticationAPIs = {
     );
     return data;
   },
-  forgotPassword: async (userEmail, token) => {
+  forgotPassword: async (userEmail) => {
     const data = await axios({
       url: Constants.Api.authentication.forgotPassword,
       method: "POST",
-      headers: {
-        authorization: 'Bearer' + ' ' + token
-      },
+      // headers: {
+      //   authorization: 'Bearer' + ' ' + token
+      // },
       data: userEmail,
     });
     return data.data;
@@ -61,13 +61,13 @@ export const authenticationAPIs = {
     });
     return data.data;
   },
-  resetPassword: async (updatedCredentials, token) => {
+  resetPassword: async (updatedCredentials) => {
     const data = await axios({
       url: Constants.Api.authentication.resetPassword,
       method: "POST",
-      headers: {
-        authorization: 'Bearer' + ' ' + token
-      },
+      // headers: {
+      //   authorization: 'Bearer' + ' ' + token
+      // },
       data: updatedCredentials
     })
     return data.data;

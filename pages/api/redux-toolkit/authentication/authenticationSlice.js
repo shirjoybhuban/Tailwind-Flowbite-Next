@@ -224,14 +224,13 @@ export const authenticationDispatcher = {
       }
     },
   forgotPassword:
-    (userEmail, token, options) => async (dispatch) => {
+    (userEmail, options) => async (dispatch) => {
       try {
         dispatch(forgotPasswordStarts(userEmail));
-        const response = await authenticationAPIs.forgotPassword(userEmail, token);
+        const response = await authenticationAPIs.forgotPassword(userEmail);
         dispatch(forgotPasswordSuccess(response));
         if (options && options.success) options.success(response);
       } catch (error) {
-        console.error("error.response in forgotPassword\n", error);
         dispatch(
           forgotPasswordError(
             (error.response && error.response.data) || null
@@ -292,10 +291,10 @@ export const authenticationDispatcher = {
       }
     },
   resetPassword:
-    (updatedCredentials, token, options) => async (dispatch) => {
+    (updatedCredentials, options) => async (dispatch) => {
       try {
         dispatch(resetPasswordStarts());
-        const response = await authenticationAPIs.resetPassword(updatedCredentials, token);
+        const response = await authenticationAPIs.resetPassword(updatedCredentials);
         dispatch(resetPasswordSuccess(response));
         if (options && options.success) options.success(response);
       } catch (error) {
