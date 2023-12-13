@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form';
 import { Divider } from 'components/layouts/common/Divider';
 
 export const ForgotPasswordPage = () => {
-  const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const [apiError, setApiError] = useState('');
   const [apiSuccess, setApiSuccess] = useState('');
@@ -39,21 +39,6 @@ export const ForgotPasswordPage = () => {
     control,
   } = useForm({ mode: 'onBlur' });
   /**
-   * Sets the Token & checks whether user is authenticated or not
-   */
-  useEffect(() => {
-    const token = cookies.get('shipSimpleToken')
-      ? cookies.get('shipSimpleToken')
-      : null;
-    setCurrentToken(token);
-    token
-      ? router.push('/dashboard/build-shipment')
-      : router.push('/forgot-password');
-    setApiError('');
-    setApiSuccess('');
-  }, []);
-
-  /**
    * Submits the form data on server once the form is filled
    *
    * @param {event} e - Form event which contains all the form object with user filled values.
@@ -61,35 +46,26 @@ export const ForgotPasswordPage = () => {
    */
   const onSubmit = async (data) => {
     setIsLoading(true);
-
-    setApiError('');
     let userEmail = {
       email: data.email,
     };
-    // console.log({ userEmail });
-    // dispatch(
-    //   authenticationDispatcher.forgotPassword(userEmail, currentToken, {
-    //     success: (response) => {
-    //       setApiSuccess(response?.message);
-    //       setFormData({});
-    //       setIsLoading(false);
-    //       return response;
-    //     },
-    //     error: (error) => {
-    //       setIsLoading(false);
-    //       setApiError(error?.data?.message);
-    //     },
-    //   })
-    // );
+    console.log({ userEmail });
+    dispatch(
+      authenticationDispatcher.forgotPassword(userEmail, {
+        success: (response) => {
+          setApiError('');
+          setApiSuccess(response?.message);
+          setIsLoading(false);
+          return response;
+        },
+        error: (error) => {
+          setIsLoading(false);
+          setApiSuccess('');
+          setApiError(error?.data?.message);
+        },
+      })
+    );
   };
-
-  /**
-   * Sets the value of the input field
-   *
-   * @param {index} index - Index of the Input field.
-   * @param {object} e - Input field event.
-   * @returns {string} Sets the value of each input field in their respective name.
-   */
 
   return (
     <>
@@ -107,7 +83,9 @@ export const ForgotPasswordPage = () => {
           <div className="public-layout-right">
             <Title heading="Forgot Password" />
 
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full md:w-[60%]">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="w-full md:w-[60%]">
               <div className="grid grid-cols-1 gap-4 mt-7">
                 <div className="mb-2 block">
                   <TextInput
@@ -167,30 +145,30 @@ export const ForgotPasswordPage = () => {
               </div>
 
               <Button
-                disabled={isSubmitting}
+                disabled={isLoading}
                 size="md"
                 color="primary"
-                className={`w-full mt-4 mb-9`}
+                className={`w-full mt-4 mb-3`}
                 type="submit">
                 <span className="text-md font-bold">
-                  {isSubmitting && (
+                  {isLoading && (
                     <Spinner aria-label="Loader" className="mx-2" />
                   )}
                   {`Reset`}
                 </span>
               </Button>
-            </form>
-            {apiError !== '' ? (
-              <p className="text-red-500 text-center px-0 py-2.5 inline-block">
+              {apiError !== '' ? (
+              <p className="w-full text-red-500 text-center px-0 py-2.5 inline-block mb-2">
                 {apiError}
               </p>
             ) : null}
-            <div className={`${style.success} inline-block`}>
-              {apiSuccess !== '' ? <p>{apiSuccess}</p> : null}
-            </div>
+              <div className={`text-center inline-block mb-9`}>
+                {apiSuccess !== '' ? <p className='text-primary-700 font-semibold text-lg'>{apiSuccess}</p> : null}
+              </div>
+            </form>
             <p className={`text-center mt-0 text-lg font-semibold`}>
-              Don't have an account yet?{' '}
-              <Link className="text-shipGreen-400 font-semibold" href="/signup">
+              Don't have an account yet?
+              <Link className="text-shipGreen-400 font-semibold ml-2" href="/signup">
                 Sign Up
               </Link>{' '}
               Or{' '}
