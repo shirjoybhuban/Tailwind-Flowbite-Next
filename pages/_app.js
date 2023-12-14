@@ -5,37 +5,11 @@ import TopBar from "components/layouts/TopBar";
 import { Provider } from "react-redux";
 import { store } from "./api/redux-toolkit/store";
 import { Toaster } from "react-hot-toast";
+import { customFlowbiteTheme } from "utility/customFlowbiteTheme";
 //import { customFlowbiteTheme } from 'theme/flowbite-theme';
 
 export default function App({ Component, pageProps }) {
-  const customFlowbiteTheme = {
-    button: {
-      color: {
-        primary: "bg-primary-500 hover:bg-primary-600 text-white font-bold",
-        primaryLow:
-          "bg-primary-50 border-primary-400 border-2 hover:bg-primary-200 text-zinc-600 font-bold",
-        secondary:
-          "bg-secondary-950 hover:bg-secondary-900 text-white font-bold",
-        secondaryLow:
-          "bg-secondary-50 border-secondary-400 border-2 hover:bg-secondary-200 text-zinc-600 font-bold",
-        ternary: "bg-ternary-500 hover:bg-ternary-600 text-white font-bold",
-      },
-    },
-    checkbox: {
-      root: {
-        base: "h-4 w-4 rounded focus:ring-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 bg-gray-100",
-        color: {
-          primary:
-            "focus:ring-primary-400 dark:ring-offset-primary-400 dark:focus:ring-primary-400 text-primary-400",
-          secondary:
-            "focus:ring-secondary-400 dark:ring-offset-secondary-400 dark:focus:ring-secondary-400 text-secondary-400",
-          ternary:
-            "focus:ring-ternary-400 dark:ring-offset-ternary-400 dark:focus:ring-ternary-400 text-ternary-400",
-        },
-      },
-    },
-  };
-
+ 
   return (
     <Provider store={store}>
       <Flowbite theme={{ theme: customFlowbiteTheme }}>

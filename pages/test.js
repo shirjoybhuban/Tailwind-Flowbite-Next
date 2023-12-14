@@ -7,6 +7,7 @@ import {
   Label,
   Radio,
   Select,
+  Spinner,
   TextInput,
   Textarea,
   Tooltip,
@@ -259,6 +260,10 @@ const Test = () => {
           <fieldset className="flex max-w-md flex-col gap-4">
             <legend className="mb-4">Choose your favorite country</legend>
             <div className="flex items-center gap-2">
+              <Radio id="bd" name="countries" value="BD" />
+              <Label htmlFor="bd">BD</Label>
+            </div>
+            <div className="flex items-center gap-2">
               <Radio
                 id="united-state"
                 name="countries"
@@ -298,6 +303,10 @@ const Test = () => {
             rows={4}
           />
         </div>
+        <Button>
+          <Spinner aria-label="Spinner button example" size="lg" />
+          <span className="pl-3">Loading...</span>
+        </Button>
         <h4 className="text-lg font-bold">Autocomplete</h4>
       </div>
     </Layout>
