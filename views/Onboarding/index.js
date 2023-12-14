@@ -13,16 +13,21 @@ import { Controller, useForm } from "react-hook-form";
 
 import { Divider } from "components/layouts/common/Divider";
 import { Title } from "components/layouts/common/Title";
+import { usersDispatcher } from "pages/api/redux-toolkit/users/usersSlice";
+import toast from "react-hot-toast";
 import { BiUser } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "universal-cookie";
 import canadapostApi from "utility/canadapost_api";
+import { Constants } from "utility/constants";
 import { provinces } from "utility/data";
-import { handleErrorMessage } from "utility/utilityFunctions";
+import { useFormError } from "utility/formHelper";
 import { useOnClickOutside } from "utility/useClickOutside";
+import { handleErrorMessage } from "utility/utilityFunctions";
 
 export const OnboardingPage = () => {
   const cookies = new Cookies();
-
+  const dispatch = useDispatch();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -32,12 +37,9 @@ export const OnboardingPage = () => {
     reset,
     control,
   } = useForm({ mode: "onBlur" });
-
-  const onSubmit = async (data) => {
-    console.log({ data });
-  };
-
+  const { userToken } = useSelector((state) => state.usersSlice);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [addressLoading, setAddressLoading] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
   const [addressDropdown, setAddressDropdown] = useState(false);
@@ -46,12 +48,31 @@ export const OnboardingPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const addressSearch = async (partialAddress) => {
+  const addressSearch = async (strAddress) => {
     const response = await canadapostApi.post("/addver/completions", {
-      partialStreet: partialAddress,
+      partialStreet: strAddress,
       countryFilter: "CA",
     });
     return response.data ?? "";
+  };
+
+  const selectedAddress = (address) => {
+    // setAddressSuggestions([]);
+    if (address.address.address) {
+      setValue("street1", address.address.address, { shouldValidate: true });
+    }
+    if (address.address.city) {
+      setValue("city", address.address.city, { shouldValidate: true });
+    }
+    if (address.address.country) {
+      setValue("country", address.address.country, { shouldValidate: true });
+    }
+    if (address.address.pc) {
+      setValue("postal_code", address.address.pc, { shouldValidate: true });
+    }
+    if (address.address.prov) {
+      setValue("state", address.address.prov, { shouldValidate: true });
+    }
   };
 
   useEffect(() => {
@@ -61,6 +82,7 @@ export const OnboardingPage = () => {
         const addresses = await addressSearch(searchTerm);
         if (addresses.data.length > 0) {
           setAddressDropdown(true);
+
           setAddressLoading(false);
           let address = addresses.data.map((address) => {
             return {
@@ -87,17 +109,51 @@ export const OnboardingPage = () => {
   const addressRef = useRef(null);
 
   const handleClickOutside = () => {
-    // Your custom logic here
-    console.log('called')
-    if(addressDropdown){
-
+    if (addressDropdown) {
       setAddressDropdown(false);
     }
   };
 
   useOnClickOutside(addressRef, handleClickOutside);
+  const { setFormError } = useFormError();
 
-  console.log({addressDropdown,addressRef})
+  const onSubmit = async (data) => {
+    console.log({ data });
+    setIsLoading(true);
+    let formData = {};
+    formData.first_name = data.first_name;
+    formData.last_name = data.last_name;
+    //formData.onboarding = data.onboarding;
+    formData.phone_number = data.phone_number;
+    formData.company_name = data.company_name;
+    formData.street1 = data.street1;
+    formData.street2 = data.street1;
+    formData.city = data.city;
+    formData.country = data.country;
+    formData.state = data.state;
+    formData.postal_code = data.postal_code;
+
+    dispatch(
+      usersDispatcher.createUserProfile(formData, userToken, {
+        success: (response) => {
+          console.log(response);
+          // if (response) {
+          //     getClientSecretKey(token);
+          //     setFormData({});
+          // }
+          setIsLoading(false);
+          return response;
+        },
+        error: (err) => {
+          if (err.status == 422) {
+            setFormError(err?.data?.errors, setError);
+          } else {
+            toast.error(Constants.DEFAULT_ERROR_TEXT);
+          }
+        },
+      })
+    );
+  };
 
   return (
     <div className="public-layout">
@@ -197,12 +253,11 @@ export const OnboardingPage = () => {
                         ? "failure"
                         : "primary"
                     }
-                    onFocus={(e)=>{
-                      e.stopPropagation()
-                      if(addressSuggestions.length >0){
-                        setAddressDropdown(true)
-                      }
-                      console.log('focused')
+                    onClick={(ev) => {
+                      ev.preventDefault();
+                      ev.stopPropagation();
+                      ev.nativeEvent.stopImmediatePropagation();
+                      setAddressDropdown(true);
                     }}
                     helperText={
                       handleErrorMessage(errors, "street1") ? (
@@ -212,9 +267,21 @@ export const OnboardingPage = () => {
                       ) : null
                     }
                     {...register("street1", {
-                      required: "Address is required",
+                      required: "Street Address is required",
                       onChange: (e) => handleChangeStreetAddress(e),
+                      onFocus: (ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        ev.nativeEvent.stopImmediatePropagation();
+
+                        setFocused(true);
+                      },
                     })}
+                    // control={control}
+                    // onBlur={(e)=>{
+                    //   e.stopPropagation()
+                    //   handleClickOutside()
+                    // }}
                   />
                   <span
                     style={{
@@ -241,8 +308,12 @@ export const OnboardingPage = () => {
                         return (
                           <li
                             key={index}
-                            className={`p-2 cursor-pointer`}
-                            onClick={() => selectedAddress(address)}
+                            className={`p-2 cursor-pointer hover:bg-gray-100 text-black`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAddressDropdown(false);
+                              selectedAddress(address);
+                            }}
                           >
                             {address.address.address}, {address.address.city},{" "}
                             {address.address.prov}, {address.address.pc}
@@ -432,12 +503,12 @@ export const OnboardingPage = () => {
                 <div className="mb-2 block">
                   <div className="flex items-center gap-2 ">
                     <Checkbox
-                      id="residential_address"
+                      id="residential"
                       color={"primary"}
-                      {...register("residential_address", { required: false })}
+                      {...register("residential", { required: false })}
                     />
                     <Label
-                      htmlFor="residential_address"
+                      htmlFor="residential"
                       className={`text-sm font-semibold cursor-pointer text-secondary-950`}
                     >
                       Residential address
@@ -457,14 +528,12 @@ export const OnboardingPage = () => {
 
             <div className="text-right float-right mt-3">
               <Button
-                disabled={isSubmitting}
-                isProcessing={isSubmitting}
-                className="px-4"
-                size={"sm"}
+                disabled={isLoading}
+                isProcessing={isLoading}
+                size={"md"}
                 type="submit"
                 color="primary"
               >
-                {/* {isSubmitting ? <span className='pr-3'><Spinner color='success' aria-label="Spinner" /></span> : null} */}
                 <span className="text-lg font-bold">Done</span>
               </Button>
             </div>
