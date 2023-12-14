@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import InputMask from "react-input-mask";
+import { useEffect, useState } from 'react';
+import InputMask from 'react-input-mask';
 
 import {
   Button,
@@ -8,20 +8,22 @@ import {
   Select,
   Spinner,
   TextInput,
-} from "flowbite-react";
-import { Controller, useForm } from "react-hook-form";
+} from 'flowbite-react';
+import { Controller, useForm } from 'react-hook-form';
 
-import { Divider } from "components/layouts/common/Divider";
-import { Title } from "components/layouts/common/Title";
-import { BiUser } from "react-icons/bi";
-import Cookies from "universal-cookie";
-import canadapostApi from "utility/canadapost_api";
-import { provinces } from "utility/data";
-import { handleErrorMessage } from "utility/utilityFunctions";
+import { Divider } from 'components/layouts/common/Divider';
+import { Title } from 'components/layouts/common/Title';
+import { BiUser } from 'react-icons/bi';
+import Cookies from 'universal-cookie';
+import canadapostApi from 'utility/canadapost_api';
+import { provinces } from 'utility/data';
+import { handleErrorMessage } from 'utility/utilityFunctions';
+import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const OnboardingPage = () => {
   const cookies = new Cookies();
-
+  const dispatch = useDispatch();
   const {
     register,
     formState: { errors, isSubmitting },
@@ -30,13 +32,10 @@ export const OnboardingPage = () => {
     setError,
     reset,
     control,
-  } = useForm({ mode: "onBlur" });
-
-  const onSubmit = async (data) => {
-    console.log({ data });
-  };
-
-  const [searchTerm, setSearchTerm] = useState("");
+  } = useForm({ mode: 'onBlur' });
+  const { userToken } = useSelector(state => state.usersSlice);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [addressLoading, setAddressLoading] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
 
@@ -44,21 +43,39 @@ export const OnboardingPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const addressSearch = async (partialAddress) => {
-    const response = await canadapostApi.post("/addver/completions", {
-      partialStreet: partialAddress,
-      countryFilter: "CA",
+  const addressSearch = async (strAddress) => {
+    const response = await canadapostApi.post('/addver/completions', {
+      partialStreet: strAddress,
+      countryFilter: 'CA',
     });
-    return response.data ?? "";
+    return response.data ?? '';
+  };
+
+  const selectedAddress = (address) => {
+    setAddressSuggestions([]);
+    if (address.address.address) {
+      setValue('street1', address.address.address, { shouldValidate: true });
+    }
+    if (address.address.city) {
+      setValue('city', address.address.city, { shouldValidate: true });
+    }
+    if (address.address.country) {
+      setValue('country', address.address.country, { shouldValidate: true });
+    }
+    if (address.address.pc) {
+      setValue('postal_code', address.address.pc, { shouldValidate: true });
+    }
+    if (address.address.prov) {
+      setValue('state', address.address.prov, { shouldValidate: true });
+    }
   };
 
   useEffect(() => {
-    if (searchTerm !== "") {
+    if (searchTerm !== '') {
       const delayDebounceFn = setTimeout(async () => {
         setAddressLoading(true);
         const addresses = await addressSearch(searchTerm);
         if (addresses.data.length > 0) {
-          setIsComponentVisible(true);
           setAddressLoading(false);
           let address = addresses.data.map((address) => {
             return {
@@ -78,8 +95,42 @@ export const OnboardingPage = () => {
   }, [searchTerm]);
 
   const onClearAddress = () => {
-    setValue("phone_number", "");
+    setValue('phone_number', '');
     reset();
+  };
+
+  const onSubmit = async (data) => {
+    console.log({ data });
+    setIsLoading(true);
+    let formData = {};
+    formData.first_name = data.first_name;
+    formData.last_name = data.last_name;
+    //formData.onboarding = data.onboarding;
+    formData.phone_number = data.phone_number;
+    formData.company_name = data.company_name;
+    formData.street1 = data.street1;
+    formData.street2 = data.street1;
+    formData.city = data.city;
+    formData.country = data.country;
+    formData.state = data.state;
+    formData.postal_code = data.postal_code;
+
+    dispatch(
+      usersDispatcher.createUserProfile(formData, userToken, {
+        success: (response) => {
+          console.log(response);
+          // if (response) {
+          //     getClientSecretKey(token);
+          //     setFormData({});
+          // }
+          setIsLoading(false);
+          return response;
+        },
+        error: (response) => {
+
+        },
+      })
+    );
   };
 
   return (
@@ -92,9 +143,7 @@ export const OnboardingPage = () => {
             </div>
 
             <div className="w-[60%] flex flex-col text-center">
-              <h1
-                className={`text-5xl text-primary-400 mb-2 font-bold`}
-              >
+              <h1 className={`text-5xl text-primary-400 mb-2 font-bold`}>
                 My Profile
               </h1>
               <p className="text-ternary-900 font-semibold mt-4 text-xl">
@@ -111,30 +160,29 @@ export const OnboardingPage = () => {
           <form
             className="w-full md:w-[70%]"
             noValidate
-            autoComplete={"off"}
-            onSubmit={handleSubmit(onSubmit)}
-          >
+            autoComplete={'off'}
+            onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-1 flex-wrap mt-7">
               <div className="grid grid-cols-2 gap-2">
                 <div className="mb-2 block">
                   <div>
                     <TextInput
                       color={
-                        handleErrorMessage(errors, "first_name")
-                          ? "failure"
-                          : "primary"
+                        handleErrorMessage(errors, 'first_name')
+                          ? 'failure'
+                          : 'primary'
                       }
                       id="first_name"
                       name="first_name"
                       type="text"
                       placeholder={`First Name`}
-                      {...register("first_name", {
-                        required: "First name is required",
+                      {...register('first_name', {
+                        required: 'First name is required',
                       })}
                       helperText={
-                        handleErrorMessage(errors, "first_name") ? (
+                        handleErrorMessage(errors, 'first_name') ? (
                           <span className="font-medium text-xs mt-0">
-                            {handleErrorMessage(errors, "first_name")}
+                            {handleErrorMessage(errors, 'first_name')}
                           </span>
                         ) : null
                       }
@@ -146,21 +194,21 @@ export const OnboardingPage = () => {
                   <div>
                     <TextInput
                       color={
-                        handleErrorMessage(errors, "last_name")
-                          ? "failure"
-                          : "primary"
+                        handleErrorMessage(errors, 'last_name')
+                          ? 'failure'
+                          : 'primary'
                       }
                       id="last_name"
                       name="last_name"
                       type="text"
                       placeholder={`Last Name`}
-                      {...register("last_name", {
-                        required: "Last name is required",
+                      {...register('last_name', {
+                        required: 'Last name is required',
                       })}
                       helperText={
-                        handleErrorMessage(errors, "last_name") ? (
+                        handleErrorMessage(errors, 'last_name') ? (
                           <span className="font-medium text-xs mt-0">
-                            {handleErrorMessage(errors, "last_name")}
+                            {handleErrorMessage(errors, 'last_name')}
                           </span>
                         ) : null
                       }
@@ -178,32 +226,31 @@ export const OnboardingPage = () => {
                     type="text"
                     placeholder="Street Address"
                     color={
-                      handleErrorMessage(errors, "street1")
-                        ? "failure"
-                        : "primary"
+                      handleErrorMessage(errors, 'street1')
+                        ? 'failure'
+                        : 'primary'
                     }
                     helperText={
-                      handleErrorMessage(errors, "street1") ? (
+                      handleErrorMessage(errors, 'street1') ? (
                         <span className="font-medium text-xs mt-0">
-                          {handleErrorMessage(errors, "street1")}
+                          {handleErrorMessage(errors, 'street1')}
                         </span>
                       ) : null
                     }
-                    {...register("street1", {
-                      required: "Address is required",
-                      //   onChange: (e) => handleChangeStreetAddress(e)
+                    {...register('street1', {
+                      required: 'Street Address is required',
+                      onChange: (e) => handleChangeStreetAddress(e),
                     })}
                   />
                   <span
                     style={{
-                      position: "absolute",
+                      position: 'absolute',
                       top: 8,
                       right: 10,
-                      cursor: "pointer",
-                    }}
-                  >
+                      cursor: 'pointer',
+                    }}>
                     {addressLoading ? (
-                      <Spinner aria-label="Spinner" color={"success"} />
+                      <Spinner aria-label="Spinner" color={'success'} />
                     ) : null}
                   </span>
 
@@ -217,9 +264,8 @@ export const OnboardingPage = () => {
                           <li
                             key={index}
                             className={`p-2 cursor-pointer`}
-                            onClick={() => selectedAddress(address)}
-                          >
-                            {address.address.address}, {address.address.city},{" "}
+                            onClick={() => selectedAddress(address)}>
+                            {address.address.address}, {address.address.city},{' '}
                             {address.address.prov}, {address.address.pc}
                           </li>
                         );
@@ -236,7 +282,7 @@ export const OnboardingPage = () => {
                     name="street2"
                     type="text"
                     placeholder="Unit / Suite number"
-                    {...register("street2")}
+                    {...register('street2')}
                   />
                 </div>
               </div>
@@ -249,16 +295,16 @@ export const OnboardingPage = () => {
                     type="text"
                     placeholder="City"
                     color={
-                      handleErrorMessage(errors, "city") ? "failure" : "primary"
+                      handleErrorMessage(errors, 'city') ? 'failure' : 'primary'
                     }
                     helperText={
-                      handleErrorMessage(errors, "city") ? (
+                      handleErrorMessage(errors, 'city') ? (
                         <span className="font-medium text-xs mt-0">
-                          {handleErrorMessage(errors, "city")}
+                          {handleErrorMessage(errors, 'city')}
                         </span>
                       ) : null
                     }
-                    {...register("city", { required: "City is required" })}
+                    {...register('city', { required: 'City is required' })}
                   />
                 </div>
                 <div className="mb-2 block">
@@ -270,17 +316,16 @@ export const OnboardingPage = () => {
                       <Select
                         className="focus:outline-none"
                         style={{
-                          borderColor: error ? "#ef4444" : "#d1d5db",
-                          outline: "none",
+                          borderColor: error ? '#ef4444' : '#d1d5db',
+                          outline: 'none',
                         }}
-                        color={error ? "failure" : "primary"}
+                        color={error ? 'failure' : 'primary'}
                         id="state"
                         name="state"
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
-                        inputRef={stateRef}
-                      >
+                        inputRef={stateRef}>
                         <option value="">Province</option>
                         {provinces.map((province) => (
                           <option key={province.value} value={province.value}>
@@ -310,19 +355,19 @@ export const OnboardingPage = () => {
                     type="text"
                     placeholder="Postal Code"
                     color={
-                      handleErrorMessage(errors, "postal_code")
-                        ? "failure"
-                        : "primary"
+                      handleErrorMessage(errors, 'postal_code')
+                        ? 'failure'
+                        : 'primary'
                     }
                     helperText={
-                      handleErrorMessage(errors, "postal_code") ? (
+                      handleErrorMessage(errors, 'postal_code') ? (
                         <span className="font-medium text-xs mt-0">
-                          {handleErrorMessage(errors, "postal_code")}
+                          {handleErrorMessage(errors, 'postal_code')}
                         </span>
                       ) : null
                     }
-                    {...register("postal_code", {
-                      required: "Postal Code is required",
+                    {...register('postal_code', {
+                      required: 'Postal Code is required',
                     })}
                   />
                 </div>
@@ -336,17 +381,16 @@ export const OnboardingPage = () => {
                       <Select
                         className="focus:outline-none"
                         style={{
-                          borderColor: error ? "#ef4444" : "#d1d5db",
-                          outline: "none",
+                          borderColor: error ? '#ef4444' : '#d1d5db',
+                          outline: 'none',
                         }}
-                        color={error ? "failure" : "primary"}
+                        color={error ? 'failure' : 'primary'}
                         id="countries"
                         name="country"
                         value={value}
                         onChange={onChange}
                         onBlur={onBlur}
-                        inputRef={countryRef}
-                      >
+                        inputRef={countryRef}>
                         <option value="">Country</option>
                         <option value="CA">Canada</option>
                       </Select>
@@ -369,14 +413,13 @@ export const OnboardingPage = () => {
                   <InputMask
                     maskChar=""
                     mask="(999) 999-9999"
-                    {...register("phone_number", {
-                      required: "Phone number is required",
+                    {...register('phone_number', {
+                      required: 'Phone number is required',
                       minLength: {
                         value: 14,
-                        message: "Phone Number should be of 10 digits",
+                        message: 'Phone Number should be of 10 digits',
                       },
-                    })}
-                  >
+                    })}>
                     {(inputProps) => (
                       <TextInput
                         {...inputProps}
@@ -386,14 +429,14 @@ export const OnboardingPage = () => {
                         type="tel"
                         disableunderline="true"
                         color={
-                          handleErrorMessage(errors, "phone_number")
-                            ? "failure"
-                            : "primary"
+                          handleErrorMessage(errors, 'phone_number')
+                            ? 'failure'
+                            : 'primary'
                         }
                         helperText={
-                          handleErrorMessage(errors, "phone_number") ? (
+                          handleErrorMessage(errors, 'phone_number') ? (
                             <span className="font-medium text-xs mt-0">
-                              {handleErrorMessage(errors, "phone_number")}
+                              {handleErrorMessage(errors, 'phone_number')}
                             </span>
                           ) : null
                         }
@@ -407,14 +450,13 @@ export const OnboardingPage = () => {
                 <div className="mb-2 block">
                   <div className="flex items-center gap-2 ">
                     <Checkbox
-                      id="residential_address"
-                      color={"primary"}
-                      {...register("residential_address", { required: false })}
+                      id="residential"
+                      color={'primary'}
+                      {...register('residential', { required: false })}
                     />
                     <Label
-                      htmlFor="residential_address"
-                      className={`text-sm font-semibold cursor-pointer text-secondary-950`}
-                    >
+                      htmlFor="residential"
+                      className={`text-sm font-semibold cursor-pointer text-secondary-950`}>
                       Residential address
                     </Label>
                   </div>
@@ -422,8 +464,7 @@ export const OnboardingPage = () => {
                 <div className="mb-2 block">
                   <p
                     className={`text-sm font-semibold cursor-pointer text-secondary-950`}
-                    onClick={onClearAddress}
-                  >
+                    onClick={onClearAddress}>
                     Clear Form
                   </p>
                 </div>
@@ -432,14 +473,11 @@ export const OnboardingPage = () => {
 
             <div className="text-right float-right mt-3">
               <Button
-                disabled={isSubmitting}
-                isProcessing={isSubmitting}
-                className="px-4"
-                size={"sm"}
+                disabled={isLoading}
+                isProcessing={isLoading}
+                size={'md'}
                 type="submit"
-                color="primary"
-              >
-                {/* {isSubmitting ? <span className='pr-3'><Spinner color='success' aria-label="Spinner" /></span> : null} */}
+                color="primary">
                 <span className="text-lg font-bold">Done</span>
               </Button>
             </div>
