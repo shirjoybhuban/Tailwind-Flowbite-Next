@@ -37,7 +37,7 @@ export const customFlowbiteTheme = {
         info: "fill-cyan-600",
         pink: "fill-pink-600",
         purple: "fill-purple-600",
-        success: "fill-primary-500",
+        success: "fill-green-500",
         warning: "fill-yellow-400",
         primary:'fill-[#f14e0d]',
         secondary:'fill-secondary-400',
