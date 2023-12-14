@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import style from './ResetPassword.module.scss';
@@ -14,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import { Button, Spinner, TextInput } from 'flowbite-react';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useSearchParams } from 'next/navigation';
+import { passwordPattern } from 'utility/formHelper';
 
 export const ResetPasswordPage = () => {
   // const formDetails = [
@@ -54,6 +56,15 @@ export const ResetPasswordPage = () => {
   const queryParams = useSearchParams();
   const resetEmail = queryParams.get('email');
   const resetToken = queryParams.get('resetLink');
+
+  console.log({resetEmail,resetToken})
+
+
+  useEffect(()=>{
+    if(!resetEmail || !resetToken){
+      router.push('404')
+    }
+  },[])
 
   // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
   // const [formErrors, setFormErrors] = useState({});
@@ -243,6 +254,7 @@ export const ResetPasswordPage = () => {
                           value: 8,
                           message: 'Password must be at least 8 characters',
                         },
+                       pattern:passwordPattern
                       })}
                     />
 

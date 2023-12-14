@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleErrorMessage } from "utility/utilityFunctions";
 import { Title } from "components/layouts/common/Title";
 import { Divider } from "components/layouts/common/Divider";
+import { passwordPattern, useFormError } from "utility/formHelper";
 
 export const LoginPage = () => {
   // const [loading, setIsLoading] = useState(false);
@@ -108,8 +109,10 @@ export const LoginPage = () => {
     control,
   } = useForm({ mode: "onBlur" });
 
+
   const onSubmit = async (data) => {
     // event.preventDefault();
+
     setApiError("");
     let userCredentials = {
       email: data.email,
@@ -149,7 +152,8 @@ export const LoginPage = () => {
           return response;
         },
         error: (error) => {
-          setIsLoading(false);
+          // setIsLoading(false);
+
           if (error.status === 302) {
             setApiError(`Server did not respond for ${data.email}`);
           } else {
@@ -174,6 +178,8 @@ export const LoginPage = () => {
       setFormData({ ...formData, [event.target.name]: event.target.value });
     }
   };
+
+
 
   return (
     <>
@@ -247,12 +253,12 @@ export const LoginPage = () => {
                             var email_stat = invalidEmailTypes.includes(
                               emailArray[1]
                             );
-                            if (false) {
-                              setDisableSignUpButton(true);
-                              return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
-                            } else {
-                              setDisableSignUpButton(false);
-                            }
+                            // if (false) {
+                            //   setDisableSignUpButton(true);
+                            //   return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
+                            // } else {
+                            //   setDisableSignUpButton(false);
+                            // }
                           },
                         },
                       })}
@@ -286,6 +292,7 @@ export const LoginPage = () => {
                           value: 8,
                           message: "Password must be at least 8 characters",
                         },
+                       pattern:passwordPattern
                       })}
                     />
 

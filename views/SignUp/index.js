@@ -1,49 +1,35 @@
-import React, { useEffect, useState } from "react";
+import { ErrorMessage } from "@hookform/error-message";
+import {
+  Button,
+  Label,
+  Radio,
+  Select,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import Image from "next/image";
-import style from "./SignUp.module.scss";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { Constants, XHR_STATE } from "utility/constants";
 import bg_image from "../../public/images/hero.svg";
 import logo from "../../public/images/logo.svg";
 import shopify_logo from "../../public/images/shopify_logo.png";
-import google_icon from "../../public/images/google.svg";
-import microsoft_icon from "../../public/images/microsoft.svg";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
-import { Constants, XHR_STATE } from "utility/constants";
-import { authenticationDispatcher } from "pages/api/redux-toolkit/authentication/authenticationSlice";
-import Head from "next/head";
-import {
-  TextInput,
-  Select,
-  Checkbox,
-  Label,
-  Button,
-  Spinner,
-  Radio,
-} from "flowbite-react";
-import { ErrorMessage } from "@hookform/error-message";
-import { Controller, useForm } from "react-hook-form";
-import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-import { useEffectOnce } from "hooks/useEffectOnce";
-import { useSearchParams } from "next/navigation";
+import style from "./SignUp.module.scss";
 
-import Cookies from "universal-cookie";
-import { handleErrorMessage } from "utility/utilityFunctions";
-import { Title } from "components/layouts/common/Title";
 import { Divider } from "components/layouts/common/Divider";
+import { Title } from "components/layouts/common/Title";
 import ResendEmail from "components/verify-account/ResendEmail";
 import toast from "react-hot-toast";
+import Cookies from "universal-cookie";
+import { passwordPattern, useFormError } from "utility/formHelper";
+import { handleErrorMessage } from "utility/utilityFunctions";
 export const SignUpPage = () => {
-  // const hasWindow = typeof window !== 'undefined';
-
-  // function getWindowDimensions() {
-  //     const width = hasWindow ? window.innerWidth : null;
-  //     const height = hasWindow ? window.innerHeight : null;
-  //     return {
-  //       width,
-  //       height,
-  //     };
-  // }
   const searchParams = useSearchParams();
   const shpfyTkn = searchParams.get("shopify_integration");
   const [loading, setIsLoading] = useState(false);
@@ -52,12 +38,10 @@ export const SignUpPage = () => {
     (state) => state.authenticationSlice
   );
   const router = useRouter();
-  // const [formData, setFormData] = useState({});
+
   const [apiError, setApiError] = useState("");
-  // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-  // const [formErrors, setFormErrors] = useState({});
+
   const [seePassword, setSeePassword] = useState(false);
-  // const [companyFull, setCompanyFull] = useState(true);
   const [shippingType, setShippingType] = useState("business");
   const [disableSignUpButton, setDisableSignUpButton] = useState(false);
   const [shopifyToken, setShopifyToken] = useState(null);
@@ -81,39 +65,8 @@ export const SignUpPage = () => {
     setShopifyToken(shpfyTkn);
   }, [shpfyTkn]);
 
-  //   useEffect(() => {
-  //     if (registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
-  //       setIsLoading(true);
-  //     }
-  //     if (
-  //       registerWithEmailPassword.response !== null &&
-  //       registerWithEmailPassword.error === "" &&
-  //       registerWithEmailPassword.loading === XHR_STATE.COMPLETE
-  //     ) {
-  //       setIsLoading(false);
-  //     } else if (
-  //       registerWithEmailPassword.error !== "" &&
-  //       registerWithEmailPassword.loading === XHR_STATE.ASLEEP
-  //     ) {
-  //       setIsLoading(false);
-  //       setApiError(registerWithEmailPassword.error);
-  //     }
-  //   }, [registerWithEmailPassword]);
+  const { setFormError } = useFormError();
 
-  // useEffectOnce(() => {
-  //     if (hasWindow) {
-  //         let screenSize = getWindowDimensions();
-  //         if(screenSize.width <= 576){
-  //             setCompanyFull(true);
-  //         }else{
-  //             setCompanyFull(false);
-  //         }
-  //     }
-  // }, []);
-
-  // /**
-  //  * Submit function of Profile form
-  //  */
   const onSubmit = async (data) => {
     let userCredentials = {
       company_name: shippingType == "personal" ? "" : data.company_name,
@@ -136,9 +89,9 @@ export const SignUpPage = () => {
           toast.success("Sign Up Successful");
         },
         error: (err) => {
-          if(err.status == 422){
-
-          }else{
+          if (err.status == 422) {
+            setFormError(err?.data?.errors, setError);
+          } else {
             toast.error(Constants.DEFAULT_ERROR_TEXT);
           }
         },
@@ -149,6 +102,13 @@ export const SignUpPage = () => {
   const handleChangeShippingType = (e) => {
     setShippingType(e.target.value);
   };
+
+  useEffect(() => {
+    if (shippingType == "personal") {
+      setError("shipping_type", false);
+      setValue("company_name", "");
+    }
+  }, [shippingType]);
 
   return (
     <div className="public-layout">
@@ -253,7 +213,7 @@ export const SignUpPage = () => {
                         id="company_name"
                         name="company_name"
                         type="text"
-                        disabled={shippingType == "personal"}
+                        disabled={shippingType === "personal"}
                         placeholder={`Company Name`}
                         {...register("company_name", {
                           validate: {
@@ -364,6 +324,7 @@ export const SignUpPage = () => {
                           value: 8,
                           message: "Password must be at least 8 characters",
                         },
+                        pattern: passwordPattern,
                       })}
                     />
 
@@ -410,7 +371,7 @@ export const SignUpPage = () => {
                         <Select
                           className="focus:outline-none"
                           style={{
-                            borderColor: error ? "#ef4444" : "#d1d5db",
+                            border: error ? "0" : "initial",
                             outline: "none",
                           }}
                           color={error ? "failure" : "primary"}
@@ -446,7 +407,9 @@ export const SignUpPage = () => {
 
               <div className="text-right float-right mt-3 w-full">
                 <Button
-                  disabled={registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS}
+                  disabled={
+                    registerWithEmailPassword.loading === XHR_STATE.IN_PROGRESS
+                  }
                   size="md"
                   color="primary"
                   className={`w-full mb-2`}

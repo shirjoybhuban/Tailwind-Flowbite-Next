@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputMask from "react-input-mask";
 
 import {
@@ -18,6 +18,7 @@ import Cookies from "universal-cookie";
 import canadapostApi from "utility/canadapost_api";
 import { provinces } from "utility/data";
 import { handleErrorMessage } from "utility/utilityFunctions";
+import { useOnClickOutside } from "utility/useClickOutside";
 
 export const OnboardingPage = () => {
   const cookies = new Cookies();
@@ -39,6 +40,7 @@ export const OnboardingPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [addressLoading, setAddressLoading] = useState(false);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [addressDropdown, setAddressDropdown] = useState(false);
 
   const handleChangeStreetAddress = (event) => {
     setSearchTerm(event.target.value);
@@ -58,7 +60,7 @@ export const OnboardingPage = () => {
         setAddressLoading(true);
         const addresses = await addressSearch(searchTerm);
         if (addresses.data.length > 0) {
-          setIsComponentVisible(true);
+          setAddressDropdown(true);
           setAddressLoading(false);
           let address = addresses.data.map((address) => {
             return {
@@ -82,6 +84,15 @@ export const OnboardingPage = () => {
     reset();
   };
 
+  const addressRef = useRef(null);
+
+  const handleClickOutside = () => {
+    // Your custom logic here
+    setAddressDropdown(false);
+  };
+
+  useOnClickOutside(addressRef, handleClickOutside);
+
   return (
     <div className="public-layout">
       <div className="public-layout-inner">
@@ -92,9 +103,7 @@ export const OnboardingPage = () => {
             </div>
 
             <div className="w-[60%] flex flex-col text-center">
-              <h1
-                className={`text-5xl text-primary-400 mb-2 font-bold`}
-              >
+              <h1 className={`text-5xl text-primary-400 mb-2 font-bold`}>
                 My Profile
               </h1>
               <p className="text-ternary-900 font-semibold mt-4 text-xl">
@@ -182,6 +191,7 @@ export const OnboardingPage = () => {
                         ? "failure"
                         : "primary"
                     }
+                    // onFocus={}
                     helperText={
                       handleErrorMessage(errors, "street1") ? (
                         <span className="font-medium text-xs mt-0">
@@ -191,7 +201,7 @@ export const OnboardingPage = () => {
                     }
                     {...register("street1", {
                       required: "Address is required",
-                      //   onChange: (e) => handleChangeStreetAddress(e)
+                      onChange: (e) => handleChangeStreetAddress(e),
                     })}
                   />
                   <span
@@ -209,8 +219,11 @@ export const OnboardingPage = () => {
 
                   {addressSuggestions.length > 0 ? (
                     <ul
+                      style={{
+                        display: addressDropdown ? "block" : "none",
+                      }}
                       className={`absolute shadow-md bg-white rounded box-border list-none max-h-[200px] overflow-auto w-full z-10 m-0 top-12`}
-                      //   ref={ref}
+                      ref={addressRef}
                     >
                       {addressSuggestions?.map((address, index) => {
                         return (
@@ -270,7 +283,7 @@ export const OnboardingPage = () => {
                       <Select
                         className="focus:outline-none"
                         style={{
-                          borderColor: error ? "#ef4444" : "#d1d5db",
+                          border: error ? "0" : "initial",
                           outline: "none",
                         }}
                         color={error ? "failure" : "primary"}
@@ -336,7 +349,7 @@ export const OnboardingPage = () => {
                       <Select
                         className="focus:outline-none"
                         style={{
-                          borderColor: error ? "#ef4444" : "#d1d5db",
+                          border: error ? "0" : "initial",
                           outline: "none",
                         }}
                         color={error ? "failure" : "primary"}
