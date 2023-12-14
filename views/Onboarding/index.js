@@ -88,10 +88,16 @@ export const OnboardingPage = () => {
 
   const handleClickOutside = () => {
     // Your custom logic here
-    setAddressDropdown(false);
+    console.log('called')
+    if(addressDropdown){
+
+      setAddressDropdown(false);
+    }
   };
 
   useOnClickOutside(addressRef, handleClickOutside);
+
+  console.log({addressDropdown,addressRef})
 
   return (
     <div className="public-layout">
@@ -191,7 +197,13 @@ export const OnboardingPage = () => {
                         ? "failure"
                         : "primary"
                     }
-                    // onFocus={}
+                    onFocus={(e)=>{
+                      e.stopPropagation()
+                      if(addressSuggestions.length >0){
+                        setAddressDropdown(true)
+                      }
+                      console.log('focused')
+                    }}
                     helperText={
                       handleErrorMessage(errors, "street1") ? (
                         <span className="font-medium text-xs mt-0">
