@@ -13,17 +13,15 @@ import { Controller, useForm } from 'react-hook-form';
 
 import { Divider } from "components/layouts/common/Divider";
 import { Title } from "components/layouts/common/Title";
+import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
 import { BiUser } from "react-icons/bi";
-import Cookies from "universal-cookie";
+import { useDispatch, useSelector } from 'react-redux';
 import canadapostApi from "utility/canadapost_api";
 import { provinces } from "utility/data";
-import { handleErrorMessage } from "utility/utilityFunctions";
 import { useOnClickOutside } from "utility/useClickOutside";
-import { usersDispatcher } from 'pages/api/redux-toolkit/users/usersSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { handleErrorMessage } from "utility/utilityFunctions";
 
 export const OnboardingPage = () => {
-  const cookies = new Cookies();
   const dispatch = useDispatch();
   const {
     register,
