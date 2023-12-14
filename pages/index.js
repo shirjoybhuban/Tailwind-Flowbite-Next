@@ -7,7 +7,7 @@ export default function Home() {
     <Layout>
     <>
       <Head>
-        <title>Login - Ship Simple</title>
+        <title>Signin - Ship Simple</title>
         <meta name="description" content="Ship Simple" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

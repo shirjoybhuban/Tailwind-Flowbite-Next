@@ -459,7 +459,7 @@ export const SignUpPage = () => {
                   className="text-shipGreen-400 font-semibold tracking-wider"
                   href="/"
                 >
-                  Login
+                  Signin
                 </Link>
               </p>
             </div>

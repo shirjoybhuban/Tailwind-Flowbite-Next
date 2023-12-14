@@ -13,91 +13,17 @@ import { handleErrorMessage } from "utility/utilityFunctions";
 import { Title } from "components/layouts/common/Title";
 import { Divider } from "components/layouts/common/Divider";
 import { passwordPattern, useFormError } from "utility/formHelper";
+import { setUserDetails, setUserToken } from "pages/api/redux-toolkit/users/usersSlice";
+import toast from "react-hot-toast";
+import Cookies from "universal-cookie";
 
 export const LoginPage = () => {
-  // const [loading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { loginWithEmailPassword } = useSelector(
-    (state) => state.authenticationSlice
-  );
   const router = useRouter();
-  // const [formData, setFormData] = useState({});
   const [apiError, setApiError] = useState("");
-  // const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-  // const [formErrors, setFormErrors] = useState({});
-  // const cookies = new Cookies();
+  const cookies = new Cookies();
   const [seePassword, setSeePassword] = useState(false);
-
-  // /**
-  //  * Sets the Token & checks whether user is authenticated or not
-  //  */
-  // useEffect(() => {
-  //     const token = cookies.get('shipSimpleToken') ? cookies.get('shipSimpleToken') : null;
-  //     token ? router.push('/dashboard/build-shipment') : router.push('/');
-  // }, []);
-
-  // /**
-  //  * Updates about the various phases of endpoints i.e. In Progress, Complete & Aslepp.
-  //  */
-  // useEffect(() => {
-  //     if (loginWithEmailPassword.loading === XHR_STATE.IN_PROGRESS) {
-  //         setIsLoading(true);
-  //     }
-  //     if (
-  //         loginWithEmailPassword.response !== null &&
-  //         loginWithEmailPassword.error === "" &&
-  //         loginWithEmailPassword.loading === XHR_STATE.COMPLETE
-  //     ) {
-  //         setIsLoading(false);
-  //     }
-  // }, [loginWithEmailPassword]);
-
-  // /**
-  //  * Checks if all required fields are filled.
-  //  */
-  // useEffect(() => {
-  //     const hasEmptyRequiredFields = formDetails
-  //         .filter(field => field.required)
-  //         .some(field => !formData[field.name]);
-  //     setIsSubmitDisabled(hasEmptyRequiredFields);
-  //     const isPasswordValid = formData.password && formData.password.length > 7;
-  //     setIsSubmitDisabled(hasEmptyRequiredFields || !isPasswordValid);
-  // }, [formDetails, formData]);
-
-  // /**
-  //  * Performs validation based on the field name and value
-  //  *
-  //  * @param {event} e - Input field event.
-  //  * @returns {string} Provides error messages based on input field error.
-  //  */
-  // const handleInputBlur = (e) => {
-  //     const { name, value } = e.target;
-  //     if (name === 'email') {
-  //         if (value !== '' && !value.includes('@')) {
-  //             setFormErrors({ ...formErrors, email: 'Email is invalid' });
-  //         } else if (value === '') {
-  //             setFormErrors({ ...formErrors, email: 'Email is required' });
-  //         } else {
-  //             setFormErrors({ ...formErrors, [name]: '' });
-  //         }
-  //     } else if (name === 'password') {
-  //         if (value !== '' && value.length < 8) {
-  //             setFormErrors({ ...formErrors, password: 'Password must be at least 8 characters' });
-  //         } else if (value === '') {
-  //             setFormErrors({ ...formErrors, password: 'Password is required' });
-  //         } else {
-  //             setFormErrors({ ...formErrors, [name]: '' });
-  //         }
-  //     } else {
-  //         setFormErrors({ ...formErrors, [name]: '' });
-  //     }
-  // };
-
-  // /**
-  // * Submits the form data on server once the form is filled
-  // *
-  // * @param {event} e - Form event which contains all the form object with user filled values.
-  // * @returns {object} Provides Response & Erros state.
 
   const {
     register,
@@ -111,8 +37,7 @@ export const LoginPage = () => {
 
 
   const onSubmit = async (data) => {
-    // event.preventDefault();
-
+    setIsLoading(true);
     setApiError("");
     let userCredentials = {
       email: data.email,
@@ -123,37 +48,44 @@ export const LoginPage = () => {
     dispatch(
       authenticationDispatcher.loginWithEmailPassword(userCredentials, {
         success: (response) => {
-          //   if (response?.token) {
-          //     dispatch(resetLoginWithEmailPassword());
+          console.log('response',response);
+          setIsLoading(false);
+          if (response?.token) {
+            let user = response.user;
+            let userId = response.user.id;
+            let accountType = 'buisness';
+            let token = response.token;
+            let newUser = {...user,account_type : accountType};
 
-          //     cookies.remove("shipSimpleToken");
-          //     cookies.remove("user");
-          //     cookies.remove("userId", { path: "/" });
-          //     cookies.set("shipSimpleToken", response.token, {
-          //       path: "/",
-          //       maxAge: 31556926,
-          //     });
-          //     cookies.set("user", response.user, { path: "/" });
-          //     cookies.set("userId", response.user.id, { path: "/" });
-
-          //     if (response?.user?.email_verified_at) {
-          //       setTimeout(() => {
-          //         router.push("/dashboard/build-shipment");
-          //       }, 1000);
-          //     } else {
-          //       setIsLoading(false);
-          //       setTimeout(() => {
-          //         router.push("/verifyAccount");
-          //       }, 1000);
-          //       //setApiError('Email not verified, Please check your email and verify it');
-          //     }
-          //   }
-          //   setFormData({});
+            cookies.remove('shipSimpleToken');
+            cookies.remove('user');
+            cookies.remove('userId');
+            cookies.remove('shippingType');
+            cookies.set('shipSimpleToken', token, {
+              path: '/',
+              maxAge: 86400,
+            });
+            cookies.set('user', newUser, {
+              path: '/',
+              maxAge: 86400,
+            });
+            cookies.set('userId', userId, {
+              path: '/',
+              maxAge: 86400,
+            });
+            cookies.set('shippingType', accountType, {
+              path: '/',
+              maxAge: 86400,
+            });
+            dispatch(setUserDetails(newUser));
+            dispatch(setUserToken(token));
+            toast.success("Login successful.");
+            router.push('/onboarding');
+          }
           return response;
         },
         error: (error) => {
-          // setIsLoading(false);
-
+          setIsLoading(false);
           if (error.status === 302) {
             setApiError(`Server did not respond for ${data.email}`);
           } else {
@@ -163,22 +95,6 @@ export const LoginPage = () => {
       })
     );
   };
-
-  // /**
-  // * Sets the value of the input field
-  // *
-  // * @param {index} index - Index of the Input field.
-  // * @param {object} e - Input field event.
-  // * @returns {string} Sets the value of each input field in their respective name.
-  // */
-  const handleChange = (index, event) => {
-    if (event.target.type === "checkbox") {
-      setFormData({ ...formData, [event.target.name]: event.target.checked });
-    } else {
-      setFormData({ ...formData, [event.target.name]: event.target.value });
-    }
-  };
-
 
 
   return (
@@ -253,12 +169,6 @@ export const LoginPage = () => {
                             var email_stat = invalidEmailTypes.includes(
                               emailArray[1]
                             );
-                            // if (false) {
-                            //   setDisableSignUpButton(true);
-                            //   return "Email address has not been accepted, if this is in error please call 1-888-210-8910";
-                            // } else {
-                            //   setDisableSignUpButton(false);
-                            // }
                           },
                         },
                       })}
@@ -292,7 +202,7 @@ export const LoginPage = () => {
                           value: 8,
                           message: "Password must be at least 8 characters",
                         },
-                       pattern:passwordPattern
+                       //pattern:passwordPattern
                       })}
                     />
 
@@ -341,23 +251,23 @@ export const LoginPage = () => {
                 </div>
               </div>
               <Button
-                disabled={isSubmitting}
+                disabled={isLoading}
                 size="md"
                 color="primary"
                 className={`w-full mb-6 mt-4`}
                 type="submit"
               >
                 <span className="text-md font-bold">
-                  {isSubmitting && (
+                  {isLoading && (
                     <Spinner aria-label="Loader" className="mx-2" />
                   )}
-                  {isSubmitting ? "Logging In..." : `Log In`}
+                  Sign In
                 </span>
               </Button>
             </form>
 
             {apiError !== "" ? (
-              <p className="text-red-500 text-center px-0 py-2.5 inline-block">
+              <p className="text-red-500 text-center px-0  inline-block">
                 {apiError}
               </p>
             ) : null}
