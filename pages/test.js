@@ -25,7 +25,7 @@ import {
 import { MdOutlineWarningAmber } from "react-icons/md";
 const Test = () => {
   return (
-    <Layout>
+    <>
       <div className="p-4">
         <h4 className="text-lg font-bold">Color</h4>
         <div className="flex gap-5">
@@ -309,7 +309,7 @@ const Test = () => {
         </Button>
         <h4 className="text-lg font-bold">Autocomplete</h4>
       </div>
-    </Layout>
+    </>
   );
 };
 

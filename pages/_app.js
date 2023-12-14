@@ -29,24 +29,24 @@ export default function App({ Component, pageProps }) {
           success: {
             duration: 3500,
             style: {
-              background: "#c0f3bf",
-              color: "#000000",
+              background: '#c0f3bf',
+              color: '#000000',
               fontWeight: 500,
             },
           },
           error: {
             duration: 3500,
             style: {
-              background: "rgb(254 202 202)",
-              color: "#000000",
+              background: 'rgb(254 202 202)',
+              color: '#000000',
               fontWeight: 500,
             },
           },
           custom: {
             duration: 3500,
             style: {
-              background: "rgb(254 249 195)",
-              color: "#000000",
+              background: 'rgb(254 249 195)',
+              color: '#000000',
               fontWeight: 500,
             },
           },

@@ -354,7 +354,7 @@ export const ResetPasswordPage = () => {
               </Link>{' '}
               Or{' '}
               <Link className="text-shipGreen-400 font-semibold" href="/">
-                Log In
+                Sign In
               </Link>
             </p>
           </div>
