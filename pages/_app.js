@@ -3,15 +3,17 @@ import { Flowbite } from "flowbite-react";
 import "../styles/globals.css";
 import TopBar from "components/layouts/TopBar";
 import { Provider } from "react-redux";
-import { store } from "./api/redux-toolkit/store";
+import { persistor, store  } from "./api/redux-toolkit/store";
 import { Toaster } from "react-hot-toast";
 import { customFlowbiteTheme } from "utility/customFlowbiteTheme";
 //import { customFlowbiteTheme } from 'theme/flowbite-theme';
 
+import { PersistGate } from 'redux-persist/integration/react';
 export default function App({ Component, pageProps }) {
  
   return (
     <Provider store={store}>
+      <PersistGate  loading={<p>Loading...</p>} persistor={persistor}>
       <Flowbite theme={{ theme: customFlowbiteTheme }}>
         <TopContainer />
         <TopBar />
@@ -52,6 +54,8 @@ export default function App({ Component, pageProps }) {
           },
         }}
       />
+      </PersistGate>
+    
     </Provider>
   );
 }

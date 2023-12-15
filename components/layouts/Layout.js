@@ -7,26 +7,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'universal-cookie';
 import logoSpinning from '../../public/images/logo-spinning.gif';
+import axios from 'axios';
 
 const Layout = ({ children }) => {
   let [hydrating, setHydrating] = useState(true);
   const { userToken } = useSelector((state) => state.usersSlice);
-  const cookies = new Cookies();
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    let token = cookies.get('shipSimpleToken');
-    if (token) {
-      let user = cookies.get('user');
-      dispatch(setUserDetails(user));
-      dispatch(setUserToken(token));
-    } else {
-      //logout user
-    }
-    setTimeout(() => {
-      setHydrating(false);
-    }, 0);
-  }, []);
 
 
   // if(hydrating){
